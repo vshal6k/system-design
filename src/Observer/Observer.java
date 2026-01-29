@@ -1,5 +1,5 @@
 package Observer;
 
-public interface NotificationAlertObserver {
+public interface Observer {
     public void update();
 }
