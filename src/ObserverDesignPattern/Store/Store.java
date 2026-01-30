@@ -1,9 +1,9 @@
-package ObserverDesignPattern.Store;
+package observerdesignpattern.store;
 
-import ObserverDesignPattern.Observable.Chair;
-import ObserverDesignPattern.Observable.Phone;
-import ObserverDesignPattern.Observer.Observer;
-import ObserverDesignPattern.Observer.ObserverImpl;
+import observerdesignpattern.observable.Chair;
+import observerdesignpattern.observable.Phone;
+import observerdesignpattern.observer.Observer;
+import observerdesignpattern.observer.ObserverImpl;
 
 public class Store {
     public static void main(String[] args) {

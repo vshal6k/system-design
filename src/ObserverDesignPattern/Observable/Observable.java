@@ -1,6 +1,6 @@
-package ObserverDesignPattern.Observable;
+package observerdesignpattern.observable;
 
-import ObserverDesignPattern.Observer.Observer;
+import observerdesignpattern.observer.Observer;
 
 public interface Observable {
     public void addObserver(Observer observer);
