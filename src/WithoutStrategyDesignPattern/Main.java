@@ -1,4 +1,4 @@
-package WithoutStrategyDesignPattern;
+package withoutstrategydesignpattern;
 
 public class Main {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package WithoutStrategyDesignPattern;
+package withoutstrategydesignpattern;
 
 public class RaceVehicle extends Vehicle{
     void drive() {
