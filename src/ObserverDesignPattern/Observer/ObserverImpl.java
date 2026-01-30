@@ -1,4 +1,4 @@
-package Observer;
+package ObserverDesignPattern.Observer;
 
 public class ObserverImpl implements Observer{
     String name;

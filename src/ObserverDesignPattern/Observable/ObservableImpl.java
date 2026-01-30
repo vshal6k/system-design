@@ -1,9 +1,9 @@
-package Observable;
+package ObserverDesignPattern.Observable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import Observer.Observer;
+import ObserverDesignPattern.Observer.Observer;
 
 public class ObservableImpl implements Observable {
     private List<Observer> subscribers = new ArrayList<>();

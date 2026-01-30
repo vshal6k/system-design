@@ -1,4 +1,4 @@
-package Observable;
+package ObserverDesignPattern.Observable;
 
 public class Chair extends ObservableImpl{
     private String brand;

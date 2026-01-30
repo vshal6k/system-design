@@ -1,4 +1,4 @@
-package Observable;
+package ObserverDesignPattern.Observable;
 
 public class Phone extends ObservableImpl{
     private String modelNumber;
