@@ -1,6 +1,9 @@
 package myelevatorsystem;
 
-public class InternalButton {
-    int label;
-    boolean pressed;
+import myelevatorsystem.requests.*;
+
+class InternalButton {
+    public InternalRequest press(int destinationFloor) {
+        return new InternalRequest(destinationFloor);
+    }
 }

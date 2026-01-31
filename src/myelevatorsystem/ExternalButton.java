@@ -1,9 +1,13 @@
 package myelevatorsystem;
 
-public class ExternalButton {
-    ExternalButtonState externalButtonState;
+import myelevatorsystem.requests.*;
 
-    void setExternalButtonState(ExternalButtonState externalButtonState) {
-        this.externalButtonState = externalButtonState;
+class ExternalButton {
+    public ExternalRequest pressUp(int floor) {
+        return new ExternalRequest(floor, Direction.UP);
+    }
+
+    public ExternalRequest pressDown(int floor) {
+        return new ExternalRequest(floor, Direction.DOWN);
     }
 }

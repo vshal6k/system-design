@@ -1,52 +1,93 @@
 package myelevatorsystem;
 
-import java.util.ArrayList;
+import myelevatorsystem.requests.*;
+import java.util.TreeSet;
+import java.util.Collections;
 
-public class ElevatorCar {
-    ArrayList<InternalButton> internalButtons;
-    ArrayList<Floor> pendingFloorReqeusts;
-    Floor currentFloor;
+class ElevatorCar {
+    int id;
+    int currentFloor;
     Direction direction;
+    ElevatorState state;
 
-    public void setCurrentFloor(Floor curentFloor) {
-        this.currentFloor = curentFloor;
+    TreeSet<Integer> upRequests = new TreeSet<>();
+    TreeSet<Integer> downRequests = new TreeSet<>(Collections.reverseOrder());
+
+    public ElevatorCar(int id) {
+        this.id = id;
+        this.currentFloor = 0;
+        this.direction = Direction.IDLE;
+        this.state = ElevatorState.IDLE;
     }
 
-    public void addPendingRequest(Floor floor) {
-        pendingFloorReqeusts.add(floor);
-        if (pendingFloorReqeusts.size() != 0)
-            this.processPendingRequests();
+    public int getCurrentFloor() {
+        return currentFloor;
     }
 
-    public void processPendingRequests() {
-        processRequest(pendingFloorReqeusts.get(0));
-        pendingFloorReqeusts.remove(0);
-        if (pendingFloorReqeusts.size() != 0)
-            this.processPendingRequests();
+    public ElevatorState getState() {
+        return state;
     }
 
-    private void updateDirection(Floor destinationFloor) {
-        if (this.currentFloor.level == destinationFloor.level) {
-            this.direction = Direction.IDLE;
-        } else if (this.currentFloor.level < destinationFloor.level) {
-            this.direction = Direction.UP;
-        } else
-            this.direction = Direction.DOWN;
+    public void addExternalRequest(ExternalRequest request) {
+        if (request.direction == Direction.UP)
+            upRequests.add(request.floor);
+        else
+            downRequests.add(request.floor);
+        updateState();
     }
 
-    public void processRequest(Floor destinationFloor) {
-        updateDirection(destinationFloor);
-
-        // take some time to move
-
-        setCurrentFloor(destinationFloor);
-        updateDirection(destinationFloor);
-
-        InternalButton internalButton = internalButtons.get(destinationFloor.level);
-        if (internalButton.pressed)
-            internalButton.pressed = false;
-        ExternalButton externalButton = destinationFloor.externalButton;
-        externalButton.externalButtonState = ExternalButtonState.NOT_PRESSED;
+    public void addInternalRequest(InternalRequest request) {
+        if (request.destinationFloor > currentFloor)
+            upRequests.add(request.destinationFloor);
+        else
+            downRequests.add(request.destinationFloor);
+        updateState();
     }
 
+    private void updateState() {
+        if (!upRequests.isEmpty() || !downRequests.isEmpty()) {
+            state = ElevatorState.MOVING;
+            if (direction == Direction.IDLE) {
+                direction = !upRequests.isEmpty() ? Direction.UP : Direction.DOWN;
+            }
+        }
+    }
+
+    // Simulates ONE STEP of elevator movement
+    public void step() {
+        if (state == ElevatorState.IDLE)
+            return;
+
+        if (direction == Direction.UP)
+            currentFloor++;
+        else if (direction == Direction.DOWN)
+            currentFloor--;
+
+        checkStop();
+    }
+
+    private void checkStop() {
+        if (direction == Direction.UP && upRequests.contains(currentFloor)) {
+            upRequests.remove(currentFloor);
+            openDoors();
+        } else if (direction == Direction.DOWN && downRequests.contains(currentFloor)) {
+            downRequests.remove(currentFloor);
+            openDoors();
+        }
+
+        if (upRequests.isEmpty() && downRequests.isEmpty()) {
+            state = ElevatorState.IDLE;
+            direction = Direction.IDLE;
+        } else if (direction == Direction.UP && upRequests.isEmpty()) {
+            direction = Direction.DOWN;
+        } else if (direction == Direction.DOWN && downRequests.isEmpty()) {
+            direction = Direction.UP;
+        }
+    }
+
+    private void openDoors() {
+        state = ElevatorState.DOORS_OPEN;
+        // simulate door delay
+        state = ElevatorState.MOVING;
+    }
 }
