@@ -1,5 +1,7 @@
 package myelevatorsystem;
 
+import myelevatorsystem.button.ExternalButton;
+
 class Floor {
     int number;
     ExternalButton externalButton;

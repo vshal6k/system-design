@@ -1,8 +1,9 @@
-package myelevatorsystem;
+package myelevatorsystem.button;
 
+import myelevatorsystem.Direction;
 import myelevatorsystem.requests.*;
 
-class ExternalButton {
+public class ExternalButton {
     public ExternalRequest pressUp(int floor) {
         return new ExternalRequest(floor, Direction.UP);
     }

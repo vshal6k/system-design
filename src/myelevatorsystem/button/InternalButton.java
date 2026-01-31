@@ -1,8 +1,8 @@
-package myelevatorsystem;
+package myelevatorsystem.button;
 
 import myelevatorsystem.requests.*;
 
-class InternalButton {
+public class InternalButton {
     public InternalRequest press(int destinationFloor) {
         return new InternalRequest(destinationFloor);
     }
