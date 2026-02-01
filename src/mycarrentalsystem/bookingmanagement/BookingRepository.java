@@ -1,16 +1,14 @@
 package mycarrentalsystem.bookingmanagement;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 
-public class BookingRepository {
-    public static ArrayList<Booking> bookings;
+import mycarrentalsystem.bookingmanagement.bookingstatus.BookingStatus;
+import mycarrentalsystem.carmanagement.Car;
 
-    public static void addBooking(Booking booking){
-        bookings.add(booking);
-    }
+public interface BookingRepository {
+    public void saveBooking(Booking booking);
 
-    public static void removeBooking(Booking booking) {
-        bookings.remove(booking);
-    }
-    
+    public boolean hasOverlappingBooking(Car car, LocalDateTime bookingStart, LocalDateTime bookingEnd);
+
+    public void updateBookingStatus(int bookingId, BookingStatus bookingStatus);
 }
