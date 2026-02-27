@@ -1,4 +1,4 @@
-package algomaster;
+package algomaster.interfaces;
 
 import java.util.List;
 

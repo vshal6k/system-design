@@ -1,4 +1,4 @@
-package algomaster;
+package algomaster.interfaces;
 
 public class PlainFormatter implements Formatter{
 
