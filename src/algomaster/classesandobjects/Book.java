@@ -1,4 +1,4 @@
-package algomaster;
+package algomaster.classesandobjects;
 import java.util.Arrays;
 
 public class Book {

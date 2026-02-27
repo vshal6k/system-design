@@ -1,4 +1,4 @@
-package algomaster;
+package algomaster.classesandobjects;
 public class BankAccount {
     private int accountNumber;
     private String ownerName;
