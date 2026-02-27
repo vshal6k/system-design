@@ -12,7 +12,8 @@ public class BookingService {
     }
 
     public boolean attemptBooking(BookingRequest bookingRequest) {
-        if (!bookingRequest.getBookingStart().isBefore(bookingRequest.getBookingEnd())) return false;
+        if (!bookingRequest.getBookingStart().isBefore(bookingRequest.getBookingEnd()))
+            return false;
         boolean hasOverlappingSlots = this.bookingRepository.hasOverlappingBooking(bookingRequest.getCar(),
                 bookingRequest.getBookingStart(),
                 bookingRequest.getBookingEnd());
@@ -26,7 +27,8 @@ public class BookingService {
 
     public void saveBooking(BookingRequest bookingRequest) {
         double price = this.calculatePrice(bookingRequest);
-        Booking booking = new Booking(bookingRequest.getUser(), bookingRequest.getCar(), bookingRequest.getBookingStart(),
+        Booking booking = new Booking(bookingRequest.getUser(), bookingRequest.getCar(),
+                bookingRequest.getBookingStart(),
                 bookingRequest.getBookingEnd(), price, BookingStatus.RESERVED);
         this.bookingRepository.saveBooking(booking);
 

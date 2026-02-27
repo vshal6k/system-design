@@ -17,16 +17,17 @@ public class InMemoryBookingRepository implements BookingRepository {
     public boolean hasOverlappingBooking(Car car, LocalDateTime bookingStart, LocalDateTime bookingEnd) {
         for (Booking booking : bookings) {
             if (booking.getCar().getId() == car.getId() && bookingStart.isBefore(booking.getBookingEnd())
-                    && booking.getBookingStart().isBefore(bookingEnd) && (booking.getBookingStatus() == BookingStatus.ACTIVE
+                    && booking.getBookingStart().isBefore(bookingEnd)
+                    && (booking.getBookingStatus() == BookingStatus.ACTIVE
                             || booking.getBookingStatus() == BookingStatus.RESERVED))
                 return true;
         }
         return false;
     }
 
-    public void updateBookingStatus(int bookingId, BookingStatus bookingStatus){
+    public void updateBookingStatus(int bookingId, BookingStatus bookingStatus) {
         for (Booking booking2 : bookings) {
-            if(booking2.getId() == bookingId){
+            if (booking2.getId() == bookingId) {
                 booking2.setBookingStatus(bookingStatus);
                 break;
             }

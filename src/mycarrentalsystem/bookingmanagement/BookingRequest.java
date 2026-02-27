@@ -7,6 +7,7 @@ import mycarrentalsystem.usermanagement.User;
 
 public class BookingRequest {
     private User user;
+
     public User getUser() {
         return user;
     }
