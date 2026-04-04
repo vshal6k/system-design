@@ -1,4 +1,4 @@
-package algomaster.designpatterns.singleton.lazyinitializationthreadunsafe;
+package algomaster.designpatterns.singleton.patterns;
 
 public class StaticBlockSingleton {
     //Similar to Eager initialisation, but useful for handling exceptions while instance creation

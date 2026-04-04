@@ -1,4 +1,4 @@
-package algomaster.designpatterns.singleton.lazyinitializationthreadunsafe;
+package algomaster.designpatterns.singleton.patterns;
 
 public class LazySingleton {
     //Lazy initialization, instance is initialised only when first requested

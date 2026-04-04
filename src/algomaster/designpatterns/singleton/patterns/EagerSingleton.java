@@ -1,4 +1,4 @@
-package algomaster.designpatterns.singleton.lazyinitializationthreadunsafe;
+package algomaster.designpatterns.singleton.patterns;
 
 public class EagerSingleton {
     // No lazy initialisation, Thread safe.

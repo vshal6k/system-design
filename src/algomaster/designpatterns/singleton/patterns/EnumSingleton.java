@@ -1,4 +1,4 @@
-package algomaster.designpatterns.singleton.lazyinitializationthreadunsafe;
+package algomaster.designpatterns.singleton.patterns;
 
 public enum EnumSingleton {
     //Thread Safe, Performant, Lazy Initialization, Reflection Safe
