@@ -20,7 +20,7 @@ public class TicTacToeSystem {
     }
 
     public static TicTacToeSystem getInstance() {
-        return TicTacToeSystem.TIC_TAC_TOE_IN_SYSTEM_INSTANCE;
+        return TicTacToeSystem.instance;
     }
 
     public void makeMove(int row, int col) {
