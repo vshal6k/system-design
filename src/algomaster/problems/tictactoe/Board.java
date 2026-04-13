@@ -30,6 +30,22 @@ public class Board {
         
     }
 
+    public int getTotalRows() {
+        return totalRows;
+    }
+
+    public int getTotalCols() {
+        return totalCols;
+    }
+
+    public int getTotalCells() {
+        return totalCells;
+    }
+
+    public int getCellsFilled() {
+        return cellsFilled;
+    }
+
     public boolean validateRow(int row){
         if(row >= 0 && row < totalRows) return true;
         else throw new IllegalArgumentException("Please provide a valid value for row.");
@@ -74,6 +90,5 @@ public class Board {
         myBoard.printBoard();
         System.out.println(myBoard.getSymbol(0, 0));
     }
-
-
+    
 }
