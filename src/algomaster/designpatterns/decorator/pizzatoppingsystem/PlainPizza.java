@@ -1,6 +1,7 @@
 package algomaster.designpatterns.decorator.pizzatoppingsystem;
 
-public class PlainPizza implements Pizza{
+public class PlainPizza implements Pizza {
+    private String description = "Plain Pizza";
 
     @Override
     public double getCost() {
