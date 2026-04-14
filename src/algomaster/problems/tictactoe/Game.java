@@ -18,6 +18,7 @@ public class Game implements Observable {
         this.winningStrategies = winningStrategies;
         this.gameState = GameState.IN_PROGRESS;
         this.board = new Board(totalRows, totalCols);
+        display();
     }
 
     public void addObserver(GameObserver o) {
@@ -42,6 +43,7 @@ public class Game implements Observable {
         if (this.gameState.equals(GameState.IN_PROGRESS)
                 && this.board.addSymbol(row, col, currentPlayer.getSymbol())) {
             this.updateState(row, col);
+            display();
         } else {
             System.out.println("Game is over. Please start a new game.");
             return;
@@ -93,7 +95,9 @@ public class Game implements Observable {
         System.out.println("--------------------------------");
     }
 
-    
+    public boolean isInProgress(){
+        return GameState.IN_PROGRESS.equals(gameState);
+    }
 
     public Player getCurrentPlayer() {
         return currentPlayer;
