@@ -10,24 +10,25 @@ public class Board {
     private int totalCells;
     private int cellsFilled;
 
-    public Board(int totalRows, int totalCols){
+    public Board(int totalRows, int totalCols) {
 
-        if(totalCols <= 0 || totalRows <= 0) {
-            throw new IllegalArgumentException("Please provide a valid value for total number of rows and columns.");
+        if (totalCols <= 0 || totalRows <= 0) {
+            System.out.println("Please provide a valid value for total number of rows and columns.");
+            return;
         }
 
         this.totalRows = totalRows;
         this.totalCols = totalCols;
-        this.totalCells = totalCols * totalCols;
+        this.totalCells = totalRows * totalCols;
         this.cellsFilled = 0;
 
-        for(int i = 0; i < totalRows; i++){
+        for (int i = 0; i < totalRows; i++) {
             grid.add(new ArrayList<>());
-            for(int j = 0; j < totalCols; j++){
+            for (int j = 0; j < totalCols; j++) {
                 grid.get(i).add(new Cell());
             }
         }
-        
+
     }
 
     public int getTotalRows() {
@@ -46,23 +47,37 @@ public class Board {
         return cellsFilled;
     }
 
-    public boolean validateRow(int row){
-        if(row >= 0 && row < totalRows) return true;
-        else throw new IllegalArgumentException("Please provide a valid value for row.");
+    public boolean isValidIndex(int row, int col){
+        if (row < 0 || row >= totalRows) {
+            System.out.println("Please provide a valid value for row.");
+            return false;
+        }
+        if (col < 0 || col >= totalCols) {
+            System.out.println("Please provide a valid value for column.");
+            return false;
+        }
+        return true;
     }
 
-    public boolean validateColumn(int column){
-        if (column >= 0 && column < totalCols) return true;
-        else throw new IllegalArgumentException("Please provide a valid value for column.");
+    public boolean isValidMove(int row, int col) {
+        if(!isValidIndex(row ,col)) return false;
+
+        if (!this.grid.get(row).get(col).isEmpty()) {
+            System.out.println("Please choose an empty cell.");
+            return false;
+        }
+        return true;
     }
 
-    public Symbol getSymbol(int row, int col){
-        validateRow(row);
-        validateColumn(col);
-        return this.grid.get(row).get(col).getSymbol();
+    public Symbol getSymbol(int row, int col) {
+        Symbol symbol = null;
+        if (isValidIndex(row, col)) {
+            symbol = this.grid.get(row).get(col).getSymbol();
+        }
+        return symbol;
     }
 
-    public void printBoard(){
+    public void printBoard() {
         for (List<Cell> list : grid) {
             for (Cell cell : list) {
                 System.out.print(cell.getSymbol().toString() + " ");
@@ -71,24 +86,26 @@ public class Board {
         }
     }
 
-    public void addSymbol(int row, int col, Symbol symbol){
-        validateRow(row);
-        validateColumn(col);
-        this.grid.get(row).set(col, new Cell(symbol));
-        this.cellsFilled++;
+    public boolean addSymbol(int row, int col, Symbol symbol) {
+        if (isValidMove(row, col)) {
+            this.grid.get(row).set(col, new Cell(symbol));
+            this.cellsFilled++;
+            return true;
+        } else
+            return false;
     }
 
-    public boolean isFull(){
+    public boolean isFull() {
         return totalCells == cellsFilled;
     }
 
     public static void main(String[] args) {
         Board myBoard = new Board(5, 5);
-        myBoard.printBoard();
-        System.out.println(myBoard.isFull());
-        myBoard.addSymbol(0, 1, Symbol.O);
-        myBoard.printBoard();
-        System.out.println(myBoard.getSymbol(0, 0));
+        // myBoard.printBoard();
+        // System.out.println(myBoard.isFull());
+        // myBoard.addSymbol(-1, 1, Symbol.O);
+        // myBoard.printBoard();
+        System.out.println(myBoard.getSymbol(-1, 0));
     }
-    
+
 }
