@@ -1,0 +1,91 @@
+package algomaster.problems.snakeladder;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Board {
+    private final int dimension;
+    private final List<Snake> snakes;
+    private final List<Ladder> ladders;
+    private final List<Cell> cells = new ArrayList<>();
+
+    public Board(int dimension, List<Snake> snakes, List<Ladder> ladders) {
+        this.dimension = dimension;
+        this.snakes = snakes;
+        this.ladders = ladders;
+        initializeCells(dimension * dimension, snakes, ladders);
+    }
+
+    private void initializeCells(int size, List<Snake> snakes, List<Ladder> ladders) {
+        for (int i = 0; i < size; i++) {
+            cells.add(new Cell(i + 1));
+        }
+        for (Snake snake : snakes) {
+            int start = snake.getStart();
+            int end = snake.getEnd();
+            validateSnakeStartEnd(start, end);
+            cells.get(start - 1).setSnakeEnd(end);
+        }
+        for (Ladder ladder : ladders) {
+            int start = ladder.getStart();
+            int end = ladder.getEnd();
+            validateLadderStartEnd(start, end);
+            cells.get(start - 1).setLadderEnd(end);
+        }
+    }
+
+    private void validateSnakeStartEnd(int start, int end) {
+        if (!validateStartEnd(start, end))
+            throw new IllegalArgumentException("Provide a valid value for snake start and end position.");
+    }
+
+    private void validateLadderStartEnd(int start, int end) {
+        if (!validateStartEnd(start, end))
+            throw new IllegalArgumentException("Provide a valid value for ladder start and end position.");
+    }
+
+    private boolean validateStartEnd(int start, int end) {
+        int size = dimension * dimension;
+        return (start > 0 && start <= size && end > 0 && end <= size);
+    }
+
+    public void printBoard() {
+        int index = 0;
+        StringBuilder board = new StringBuilder();
+        boolean reverse = false;
+
+        for (int i = 0; i < dimension; i++) {
+
+            StringBuilder row = new StringBuilder();
+            StringBuilder rowReversed = new StringBuilder();
+
+            for (int j = 0; j < dimension; j++) {
+                String cellContent = cells.get(index++).toString();
+                row.append(cellContent + " ");
+                rowReversed.insert(0, cellContent + " ");
+            }
+            
+            if (reverse)
+                board.insert(0, rowReversed + "\n");
+            else
+                board.insert(0, row + "\n");
+
+            reverse = !reverse;
+        }
+        System.out.println(board);
+    }
+
+    public static void main(String[] args) {
+        Snake snake1 = new Snake(4, 1);
+        Snake snake2 = new Snake(5, 2);
+        List<Snake> snakes = List.of(snake1, snake2);
+
+        Ladder ladder1 = new Ladder(1, 4);
+        Ladder ladder2 = new Ladder(2, 3);
+        List<Ladder> ladders = List.of(ladder1, ladder2);
+
+        Board board = new Board(5, snakes, ladders);
+        board.printBoard();
+    }
+
+}
