@@ -75,12 +75,15 @@ public class Board {
         System.out.println(board);
     }
 
+    public int getSize() {
+        return dimension * dimension;
+    }
+
     public int move(int start, int distance) {
         int size = dimension * dimension;
         int end = start + distance;
         while (end <= size && (cells.get(end - 1).getSnakeEnd() != -1 || cells.get(end - 1).getLadderEnd() != -1)) {
             // end is on the board and snake or ladder is present
-            System.out.println(end);
             int snakeEnd = cells.get(end - 1).getSnakeEnd();
             int ladderEnd = cells.get(end - 1).getLadderEnd();
             end = (snakeEnd != -1) ? snakeEnd : ladderEnd;

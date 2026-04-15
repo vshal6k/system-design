@@ -27,7 +27,7 @@ public class Cell {
 
     @Override
     public String toString() {
-        return "(" + number + " LE: " + ladderEnd + " SE: " + snakeEnd + ")";
+        return "(" + number + ", " + ladderEnd + ", " + snakeEnd + ")";
     }
 
     public void setSnakeEnd(int snakeEnd) {
