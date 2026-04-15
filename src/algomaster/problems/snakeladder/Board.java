@@ -64,7 +64,7 @@ public class Board {
                 row.append(cellContent + " ");
                 rowReversed.insert(0, cellContent + " ");
             }
-            
+
             if (reverse)
                 board.insert(0, rowReversed + "\n");
             else
@@ -75,17 +75,31 @@ public class Board {
         System.out.println(board);
     }
 
+    public int move(int start, int distance) {
+        int size = dimension * dimension;
+        int end = start + distance;
+        while (end <= size && (cells.get(end - 1).getSnakeEnd() != -1 || cells.get(end - 1).getLadderEnd() != -1)) {
+            // end is on the board and snake or ladder is present
+            System.out.println(end);
+            int snakeEnd = cells.get(end - 1).getSnakeEnd();
+            int ladderEnd = cells.get(end - 1).getLadderEnd();
+            end = (snakeEnd != -1) ? snakeEnd : ladderEnd;
+        }
+        return end;
+    }
+
     public static void main(String[] args) {
-        Snake snake1 = new Snake(4, 1);
-        Snake snake2 = new Snake(5, 2);
+        Snake snake1 = new Snake(8, 6);
+        Snake snake2 = new Snake(9, 2);
         List<Snake> snakes = List.of(snake1, snake2);
 
-        Ladder ladder1 = new Ladder(1, 4);
+        Ladder ladder1 = new Ladder(3, 8);
         Ladder ladder2 = new Ladder(2, 3);
         List<Ladder> ladders = List.of(ladder1, ladder2);
 
-        Board board = new Board(5, snakes, ladders);
-        board.printBoard();
+        Board board = new Board(10, snakes, ladders);
+        // board.printBoard();
+        System.out.println(board.move(1, 1));
     }
 
 }
