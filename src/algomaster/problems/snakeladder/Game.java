@@ -5,8 +5,7 @@ import java.util.List;
 
 public class Game {
     private final Board board;
-    private final List<Player> players;
-    private List<Integer> playerPositions = new ArrayList<>();
+    private final List<PlayerState> playerStates = new ArrayList<>();
     private int playerIndex;
     private final Dice dice;
     private GameStatus gameStatus;
@@ -14,21 +13,19 @@ public class Game {
     public Game(Board board, List<Player> players, Dice dice) {
         validatePlayers(players);
         this.board = board;
-        this.players = players;
         this.dice = dice;
         this.gameStatus = GameStatus.IN_PROGRESS;
         this.playerIndex = 0;
-        initialisePlayerPositions();
+        initialisePlayerStates(players);
     }
 
     private void validatePlayers(List<Player> players){
         if(players.size() < 2) throw new IllegalArgumentException("Minimum two players are required to start the game.");
     }
 
-    private void initialisePlayerPositions() {
-        int playerCount = players.size();
-        for (int i = 0; i < playerCount; i++) {
-            playerPositions.add(0);
+    private void initialisePlayerStates(List<Player> players){
+        for (Player player : players) {
+            playerStates.add(new PlayerState(player));
         }
     }
 
@@ -39,26 +36,26 @@ public class Game {
             throw new IllegalStateException("Game is over. Please start a new game to play.");
         }
 
-        log.append(players.get(playerIndex).getName() + " is rolling a dice.\n");
+        log.append(playerStates.get(playerIndex).getPlayerName() + " is rolling a dice.\n");
 
         int diceRollValue = dice.produceNumber();
         log.append("Dice produced " + diceRollValue + ".\n");
 
-        int currentPlayerNewPosition = board.move(playerPositions.get(playerIndex), diceRollValue, log);
+        int currentPlayerNewPosition = board.move(playerStates.get(playerIndex).getPosition(), diceRollValue, log);
 
         // Player position update, if the position overshoots board the position is not
         // updated.
         if (currentPlayerNewPosition > board.getSize())
-            currentPlayerNewPosition = playerPositions.get(playerIndex);
+            currentPlayerNewPosition = playerStates.get(playerIndex).getPosition();
         else
-            playerPositions.set(playerIndex, currentPlayerNewPosition);
+            playerStates.get(playerIndex).setPosition(currentPlayerNewPosition);
 
-        log.append(players.get(playerIndex).getName() + " is at " + currentPlayerNewPosition + "\n");
+        log.append(playerStates.get(playerIndex).getPlayerName() + " is at " + currentPlayerNewPosition + "\n");
 
         if (checkWin(currentPlayerNewPosition)) {
             // current player has won, so turn rotation is skipped.
             this.gameStatus = GameStatus.OVER;
-            log.append("Game is over. " + players.get(playerIndex).getName() + " wins.\n");
+            log.append("Game is over. " + playerStates.get(playerIndex).getPlayerName() + " wins.\n");
             System.out.print(log);
             return;
         }
@@ -76,7 +73,7 @@ public class Game {
     }
 
     private void rotateTurn(int diceRollValue) {
-        int size = players.size();
+        int size = playerStates.size();
         if (diceRollValue != dice.getRange()) {
             playerIndex = (playerIndex + 1) % size;
         }
@@ -84,8 +81,8 @@ public class Game {
 
     public void display() {
         board.printBoard();
-        for (int i = 0; i < players.size(); i++) {
-            System.out.println(players.get(i).getName() + " is at " + playerPositions.get(i));
+        for (int i = 0; i < playerStates.size(); i++) {
+            System.out.println(playerStates.get(i).getPlayerName() + " is at " + playerStates.get(i).getPosition());
         }
     }
 
