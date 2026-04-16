@@ -87,14 +87,22 @@ public class Board {
         return dimension * dimension;
     }
 
-    public int move(int start, int distance) {
+    public int move(int start, int distance, StringBuilder log) {
         int size = dimension * dimension;
         int end = start + distance;
+        log.append("Player moved by " + distance + " position.\n");
         while (end <= size && (cells.get(end - 1).getSnakeEnd() != -1 || cells.get(end - 1).getLadderEnd() != -1)) {
             // end is on the board and snake or ladder is present
             int snakeEnd = cells.get(end - 1).getSnakeEnd();
             int ladderEnd = cells.get(end - 1).getLadderEnd();
             end = (snakeEnd != -1) ? snakeEnd : ladderEnd;
+            if(snakeEnd != -1){
+                log.append("Snake ate the player and ejected it at " + snakeEnd + "\n");
+                end = snakeEnd;
+            }else{
+                log.append("Player climbed the ladder and reached " + ladderEnd + "\n");
+                end = ladderEnd;
+            }
         }
         return end;
     }
@@ -110,7 +118,7 @@ public class Board {
 
         Board board = new Board(10, snakes, ladders);
         // board.printBoard();
-        System.out.println(board.move(1, 1));
+        System.out.println(board.move(1, 1, new StringBuilder()));
     }
 
 }

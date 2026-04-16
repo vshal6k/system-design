@@ -33,13 +33,18 @@ public class Game {
     }
 
     public void makeMove() {
+        StringBuilder log = new StringBuilder();
         if (this.gameStatus != GameStatus.IN_PROGRESS) {
             // Game is over, so move cannot be processed.
             throw new IllegalStateException("Game is over. Please start a new game to play.");
         }
-        int diceRollValue = dice.produceNumber();
 
-        int currentPlayerNewPosition = board.move(playerPositions.get(playerIndex), diceRollValue);
+        log.append(players.get(playerIndex).getName() + " is rolling a dice.\n");
+
+        int diceRollValue = dice.produceNumber();
+        log.append("Dice produced " + diceRollValue + ".\n");
+
+        int currentPlayerNewPosition = board.move(playerPositions.get(playerIndex), diceRollValue, log);
 
         // Player position update, if the position overshoots board the position is not
         // updated.
@@ -48,11 +53,18 @@ public class Game {
         else
             playerPositions.set(playerIndex, currentPlayerNewPosition);
 
+        log.append(players.get(playerIndex).getName() + " is at " + currentPlayerNewPosition + "\n");
+
         if (checkWin(currentPlayerNewPosition)) {
             // current player has won, so turn rotation is skipped.
             this.gameStatus = GameStatus.OVER;
+            log.append("Game is over. " + players.get(playerIndex).getName() + " wins.\n");
+            System.out.print(log);
             return;
         }
+
+        //Print the log
+        System.out.print(log);
 
         // Turn Rotation Logic
         rotateTurn(diceRollValue);
@@ -64,8 +76,8 @@ public class Game {
     }
 
     private void rotateTurn(int diceRollValue) {
-        int size = dice.getRange();
-        if (diceRollValue != size) {
+        int size = players.size();
+        if (diceRollValue != dice.getRange()) {
             playerIndex = (playerIndex + 1) % size;
         }
     }
@@ -96,7 +108,10 @@ public class Game {
 
         Game game = new Game(board, players, dice);
 
-        game.display();
+        while(game.gameStatus != GameStatus.OVER){
+            game.makeMove();
+            System.out.println("====================");
+        }
 
     }
 
