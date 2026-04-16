@@ -14,6 +14,7 @@ public class Board {
         this.snakes = snakes;
         this.ladders = ladders;
         initializeCells(dimension * dimension, snakes, ladders);
+        validateCells();
     }
 
     private void initializeCells(int size, List<Snake> snakes, List<Ladder> ladders) {
@@ -31,6 +32,13 @@ public class Board {
             int end = ladder.getEnd();
             validateLadderStartEnd(start, end);
             cells.get(start - 1).setLadderEnd(end);
+        }
+    }
+
+    private void validateCells(){
+        for (Cell cell : cells) {
+            if(cell.getLadderEnd() != -1 && cell.getSnakeEnd() != -1)
+                throw new IllegalArgumentException("A snake and ladder start at the same cell.");
         }
     }
 
