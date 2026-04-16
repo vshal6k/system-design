@@ -12,12 +12,17 @@ public class Game {
     private GameStatus gameStatus;
 
     public Game(Board board, List<Player> players, Dice dice) {
+        validatePlayers(players);
         this.board = board;
         this.players = players;
         this.dice = dice;
         this.gameStatus = GameStatus.IN_PROGRESS;
         this.playerIndex = 0;
         initialisePlayerPositions();
+    }
+
+    private void validatePlayers(List<Player> players){
+        if(players.size() < 2) throw new IllegalArgumentException("Minimum two players are required to start the game.");
     }
 
     private void initialisePlayerPositions() {
@@ -59,7 +64,7 @@ public class Game {
     }
 
     private void rotateTurn(int diceRollValue) {
-        int size = players.size();
+        int size = dice.getRange();
         if (diceRollValue != size) {
             playerIndex = (playerIndex + 1) % size;
         }
