@@ -12,8 +12,8 @@ public class DoublyLinkedList<K, V> {
         tail.setPrevious(head);
     }
 
-    public Node<K, V> getTail() {
-        return tail;
+    public Node<K, V> getLastNode() {
+        return tail.getPrevious();
     }
 
     // Adds a node at the front of the linked list

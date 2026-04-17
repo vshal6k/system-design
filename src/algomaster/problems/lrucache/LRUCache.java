@@ -12,7 +12,7 @@ public class LRUCache<K, V> implements Cache<K,V>{
         this.capacity = capacity;
     }
 
-    public V get(K key){
+    public synchronized V get(K key){
         //key does not exist in the cache
         if(keyNodeMapping.get(key) == null) return null;
 
@@ -21,7 +21,7 @@ public class LRUCache<K, V> implements Cache<K,V>{
         return node.getValue();
     }
 
-    public void put(K key, V v){
+    public synchronized void put(K key, V v){
         if(keyNodeMapping.get(key) != null){
             //key exists, update the value and recency
             Node<K, V> node = keyNodeMapping.get(key);
@@ -36,14 +36,14 @@ public class LRUCache<K, V> implements Cache<K,V>{
                 dll.addInFront(node);
             }else{
                 //cache is full, so remove the tail and insert in front
-                keyNodeMapping.remove(dll.getTail().getKey());
+                keyNodeMapping.remove(dll.getLastNode().getKey());
                 dll.removeTail();
                 dll.addInFront(node);
             }
         }
     }
 
-    public void print(){
+    public synchronized void print(){
         dll.print();
     }
 
