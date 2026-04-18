@@ -11,7 +11,7 @@ public class BloomFilter {
         this.bits = builder.bits;
     }
 
-    public void add(String element){
+    public synchronized void add(String element){
         int hashFunctionsRequired = config.getHashFunctionsRequired();
         int bitArraySize = config.getBitArraySize();
         for (int seed = 0; seed < hashFunctionsRequired; seed++) {
@@ -19,7 +19,7 @@ public class BloomFilter {
         }
     }
 
-    public boolean mightContain(String element){
+    public synchronized boolean mightContain(String element){
         int hashFunctionsRequired = config.getHashFunctionsRequired();
         int bitArraySize = config.getBitArraySize();
         for (int seed = 0; seed < hashFunctionsRequired; seed++) {
@@ -29,7 +29,7 @@ public class BloomFilter {
         return true;
     }
 
-    public void clear(){
+    public synchronized void clear(){
         bits.clear();
     }
 
