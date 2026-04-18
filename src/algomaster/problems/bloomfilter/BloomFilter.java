@@ -1,9 +1,16 @@
 package algomaster.problems.bloomfilter;
 
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
+
 public class BloomFilter {
     private final BloomFilterConfig config;
     private HashStrategy hashStrategy;
     private BitArray bits;
+    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private ReadLock readLock = lock.readLock();
+    private WriteLock writeLock = lock.writeLock();
 
     private BloomFilter(Builder builder) {
         this.config = builder.config;
@@ -11,35 +18,50 @@ public class BloomFilter {
         this.bits = builder.bits;
     }
 
-    public synchronized void add(String element) {
+    public void add(String element) {
         if (element == null) {
             throw new IllegalArgumentException("Element cannot be null");
         }
 
         int hashFunctionsRequired = config.getHashFunctionsRequired();
         int bitArraySize = config.getBitArraySize();
-        for (int seed = 0; seed < hashFunctionsRequired; seed++) {
-            bits.setBit(hashStrategy.hash(element, seed, bitArraySize));
+        try {
+            writeLock.lock();
+            for (int seed = 0; seed < hashFunctionsRequired; seed++) {
+                bits.setBit(hashStrategy.hash(element, seed, bitArraySize));
+            }
+        }finally{
+            writeLock.unlock();
         }
     }
 
-    public synchronized boolean mightContain(String element) {
+    public boolean mightContain(String element) {
         if (element == null) {
             throw new IllegalArgumentException("Element cannot be null");
         }
 
         int hashFunctionsRequired = config.getHashFunctionsRequired();
         int bitArraySize = config.getBitArraySize();
-        for (int seed = 0; seed < hashFunctionsRequired; seed++) {
-            if (!bits.getBit(hashStrategy.hash(element, seed, bitArraySize)))
-                return false;
-
+        try {
+            readLock.lock();
+            for (int seed = 0; seed < hashFunctionsRequired; seed++) {
+                if (!bits.getBit(hashStrategy.hash(element, seed, bitArraySize)))
+                    return false;
+    
+            }
+        }finally{
+            readLock.unlock();
         }
         return true;
     }
 
-    public synchronized void clear() {
-        bits.clear();
+    public void clear() {
+        try {
+            writeLock.lock();
+            bits.clear();
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     public static class Builder {
