@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import algomaster.problems.stackoverflow.dataclasses.Comment;
@@ -12,10 +14,10 @@ import algomaster.problems.stackoverflow.enums.EventType;
 import algomaster.problems.stackoverflow.enums.VoteType;
 
 public abstract class Post extends Content {
-    private List<Comment> comments = new ArrayList<>();
-    private Map<String, VoteType> voters = new HashMap<>();
+    private List<Comment> comments = new CopyOnWriteArrayList<>();
+    private ConcurrentHashMap<String, VoteType> voters = new ConcurrentHashMap<>();
     private AtomicInteger voteCount = new AtomicInteger();
-    private List<PostObserver> postObservers = new ArrayList<>();
+    private CopyOnWriteArrayList<PostObserver> postObservers = new CopyOnWriteArrayList<>();
 
     public Post(String body, User author) {
         super(body, author);
@@ -35,7 +37,7 @@ public abstract class Post extends Content {
         comments.add(comment);
     }
 
-    public void vote(User user, VoteType voteType) {
+    public synchronized void vote(User user, VoteType voteType) {
         if (!voters.containsKey(user.getId())) {
             voters.put(user.getId(), voteType);
             notifyPostObservers(new Event(getEventType(voteType), user, this));

@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import algomaster.problems.stackoverflow.dataclasses.Event;
 import algomaster.problems.stackoverflow.dataclasses.Tag;
@@ -16,13 +17,13 @@ import algomaster.problems.stackoverflow.enums.VoteType;
 public class Question extends Post {
     private String title;
     private Answer acceptedAnswer;
-    private Set<Tag> tags = new HashSet<>();
-    private Map<String, Answer> answers = new HashMap<>();
+    private final Set<Tag> tags;
+    private ConcurrentHashMap<String, Answer> answers = new ConcurrentHashMap<>();
 
     public Question(String body, User author, String title, Set<Tag> tags) {
         super(body, author);
         this.title = title;
-        this.tags = new HashSet<>(tags);
+        this.tags = Set.copyOf(tags);
     }
 
     public void addAnswer(Answer answer) {
@@ -33,7 +34,7 @@ public class Question extends Post {
         return answers.containsKey(answer.getId());
     }
 
-    public void acceptAnswer(User user, Answer answer) {
+    public synchronized void acceptAnswer(User user, Answer answer) {
         if(!this.hasAnswer(answer)) throw new IllegalArgumentException("Question and answer are not related");
 
         if(!user.equals(this.getAuthor())) throw new IllegalArgumentException("Answers can only be accepted by question authors");

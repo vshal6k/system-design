@@ -6,15 +6,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import algomaster.problems.stackoverflow.dataclasses.Comment;
 import algomaster.problems.stackoverflow.dataclasses.Tag;
 import algomaster.problems.stackoverflow.enums.VoteType;
 
 public class StackOverflowService {
-    private Map<String, User> users = new HashMap<>();
-    private Map<String, Question> questions = new HashMap<>();
-    private Map<String, Answer> answers = new HashMap<>();
+    private ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Question> questions = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Answer> answers = new ConcurrentHashMap<>();
     private PostObserver reputationManager = new ReputationManager();
 
     private User getUser(String userId) {
