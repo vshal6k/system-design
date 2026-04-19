@@ -6,10 +6,10 @@ import java.util.List;
 import algomaster.problems.stackoverflow.dataclasses.Tag;
 
 public class TagSearchStrategy implements SeachStrategy {
-    private List<Tag> tags;
+    private final List<Tag> tags;
 
     public TagSearchStrategy(List<Tag> tags) {
-        this.tags = tags;
+        this.tags = List.copyOf(tags);
     }
 
     @Override

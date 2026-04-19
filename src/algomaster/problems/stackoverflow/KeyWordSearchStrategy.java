@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KeyWordSearchStrategy implements SeachStrategy{
-    private List<String> keywords; 
+    private final List<String> keywords; 
 
     public KeyWordSearchStrategy(List<String> keywords) {
-        this.keywords = keywords;
+        this.keywords = List.copyOf(keywords);
     }
 
     @Override
