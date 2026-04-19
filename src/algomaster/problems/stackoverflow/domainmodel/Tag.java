@@ -12,11 +12,6 @@ public class Tag {
     }
 
     @Override
-    public String toString() {
-        return "Tag [name=" + name + "]";
-    }
-
-    @Override
     public boolean equals(Object object){
         if(object instanceof Tag tag && tag.name.equals(this.name)){
             return true;
@@ -26,6 +21,10 @@ public class Tag {
     @Override
     public int hashCode(){
         return this.name.hashCode();
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

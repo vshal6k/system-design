@@ -4,20 +4,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import algomaster.problems.stackoverflow.domainmodel.Question;
+import algomaster.problems.stackoverflow.domainmodel.User;
 
-public class KeyWordSearchStrategy implements SearchStrategy{
-    private final String keyword;
+public class UserSearchStrategy implements SearchStrategy{
+    private final User user;
 
-    public KeyWordSearchStrategy(String keyword) {
-        this.keyword = keyword.toLowerCase();
+    public UserSearchStrategy(User user) {
+        this.user = user;
     }
 
     @Override
     public List<Question> filter(List<Question> questions) {
         return questions.stream()
-                .filter(q -> q.getTitle().toLowerCase().contains(keyword) ||
-                        q.getBody().toLowerCase().contains(keyword))
+                .filter(q -> q.getAuthor().getId().equals(user.getId()))
                 .collect(Collectors.toList());
     }
-    
 }

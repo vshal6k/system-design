@@ -1,10 +1,7 @@
 package algomaster.problems.stackoverflow.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,10 +16,10 @@ import algomaster.problems.stackoverflow.event.PostObserver;
 import algomaster.problems.stackoverflow.event.ReputationManager;
 
 public class StackOverflowService {
-    private ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String, Question> questions = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String, Answer> answers = new ConcurrentHashMap<>();
-    private PostObserver reputationManager = new ReputationManager();
+    private final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Question> questions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Answer> answers = new ConcurrentHashMap<>();
+    private final PostObserver reputationManager = new ReputationManager();
 
     private User getUser(String userId) {
         if (userId == null)
@@ -31,7 +28,7 @@ public class StackOverflowService {
         User user = users.get(userId);
 
         if (user == null)
-            throw new IllegalArgumentException("User not found");
+            throw new NoSuchElementException("User not found");
 
         return user;
     }
@@ -43,7 +40,7 @@ public class StackOverflowService {
         Question question = questions.get(questionId);
 
         if (question == null)
-            throw new IllegalArgumentException("Question not found");
+            throw new NoSuchElementException("Question not found");
 
         return questions.get(questionId);
     }
@@ -55,7 +52,7 @@ public class StackOverflowService {
         Answer answer = answers.get(answerId);
 
         if (answer == null)
-            throw new IllegalArgumentException("Answer not found");
+            throw new NoSuchElementException("Answer not found");
 
         return answers.get(answerId);
     }
@@ -72,7 +69,7 @@ public class StackOverflowService {
         if (answer != null)
             return answer;
 
-        throw new IllegalArgumentException("Post not found");
+        throw new NoSuchElementException("Post not found");
     }
 
     public User createUser(String name) {
@@ -120,9 +117,9 @@ public class StackOverflowService {
         post.addComment(new Comment(comment, author));
     }
 
-    public List<Question> searchQuestions(List<SeachStrategy> searchStrategies){
+    public List<Question> searchQuestions(List<SearchStrategy> searchStrategies){
         List<Question> questions = this.questions.entrySet().stream().map(entry -> entry.getValue()).toList();
-        for (SeachStrategy seachStrategy : searchStrategies) {
+        for (SearchStrategy seachStrategy : searchStrategies) {
             questions = seachStrategy.filter(questions);
         }
         return questions;

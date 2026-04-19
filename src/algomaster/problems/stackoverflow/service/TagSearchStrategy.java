@@ -2,25 +2,24 @@ package algomaster.problems.stackoverflow.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import algomaster.problems.stackoverflow.domainmodel.Question;
 import algomaster.problems.stackoverflow.domainmodel.Tag;
 
-public class TagSearchStrategy implements SeachStrategy {
-    private final List<Tag> tags;
+public class TagSearchStrategy implements SearchStrategy {
+    private final Tag tag;
 
-    public TagSearchStrategy(List<Tag> tags) {
-        this.tags = List.copyOf(tags);
+    public TagSearchStrategy(Tag tag) {
+        this.tag = tag;
     }
 
     @Override
     public List<Question> filter(List<Question> questions) {
-        List<Question> filteredQuestions = new ArrayList<>();
-        for (Question question : questions) {
-            if (question.hasAnyTag(tags))
-                filteredQuestions.add(question);
-        }
-        return filteredQuestions;
+        return questions.stream()
+                .filter(q -> q.getTags().stream()
+                        .anyMatch(t -> t.getName().equalsIgnoreCase(tag.getName())))
+                .collect(Collectors.toList());
     }
 
 }

@@ -1,9 +1,6 @@
 package algomaster.problems.stackoverflow.domainmodel;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,10 +12,10 @@ import algomaster.problems.stackoverflow.event.PostObserver;
 
 
 public abstract class Post extends Content {
-    private List<Comment> comments = new CopyOnWriteArrayList<>();
-    private ConcurrentHashMap<String, VoteType> voters = new ConcurrentHashMap<>();
-    private AtomicInteger voteCount = new AtomicInteger();
-    private CopyOnWriteArrayList<PostObserver> postObservers = new CopyOnWriteArrayList<>();
+    private final List<Comment> comments = new CopyOnWriteArrayList<>();
+    private final ConcurrentHashMap<String, VoteType> voters = new ConcurrentHashMap<>();
+    private final AtomicInteger voteCount = new AtomicInteger();
+    private final CopyOnWriteArrayList<PostObserver> postObservers = new CopyOnWriteArrayList<>();
 
     public Post(String body, User author) {
         super(body, author);
@@ -39,16 +36,22 @@ public abstract class Post extends Content {
     }
 
     public synchronized void vote(User user, VoteType voteType) {
-        if (!voters.containsKey(user.getId())) {
-            voters.put(user.getId(), voteType);
-            notifyPostObservers(new Event(getEventType(voteType), user, this));
-            if (VoteType.UPVOTE.equals(voteType))
-                voteCount.incrementAndGet();
-            else
-                voteCount.decrementAndGet();
+        String userId = user.getId();
 
-        } else
-            throw new IllegalStateException("User can vote only once per post");
+        if(voters.get(userId) == voteType) return;
+
+        int scoreChange = 0;
+        if(voters.containsKey(userId)){
+            //User is changing theri vote
+            scoreChange = (voteType == VoteType.UPVOTE)? 2: -2;
+        }else{
+            //User is voting for the first time
+            scoreChange = (voteType == VoteType.UPVOTE)? 1: -1;
+        }
+
+        voteCount.addAndGet(scoreChange);
+        voters.put(userId, voteType);
+        notifyPostObservers(new Event(getEventType(voteType), user, this));
     }
 
     public abstract EventType getEventType(VoteType voteType);

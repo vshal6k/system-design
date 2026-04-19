@@ -1,7 +1,5 @@
 package algomaster.problems.stackoverflow;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -10,60 +8,61 @@ import algomaster.problems.stackoverflow.domainmodel.Question;
 import algomaster.problems.stackoverflow.domainmodel.Tag;
 import algomaster.problems.stackoverflow.domainmodel.User;
 import algomaster.problems.stackoverflow.enums.VoteType;
-import algomaster.problems.stackoverflow.service.SeachStrategy;
+import algomaster.problems.stackoverflow.service.SearchStrategy;
 import algomaster.problems.stackoverflow.service.StackOverflowService;
 import algomaster.problems.stackoverflow.service.TagSearchStrategy;
+import algomaster.problems.stackoverflow.service.UserSearchStrategy;
 
 public class StackOverFlowDemo {
 
     public static void main(String[] args) {
-        StackOverflowService stackOverflowService = new StackOverflowService();
-        User vishal = stackOverflowService.createUser("Vishal");
-        User kanan = stackOverflowService.createUser("Kanan");
-        User het = stackOverflowService.createUser("Het");
-        
-        Tag tag1 = new Tag("Gym");
-        Tag tag2 = new Tag("Exercise");
-        Set<Tag> gymTags = new HashSet<>();
-        gymTags.add(tag1);
-        gymTags.add(new Tag("Exercise"));
+        StackOverflowService service = new StackOverflowService();
 
-        Question question1 = stackOverflowService.postQuestion(vishal.getId(), "Gym Question", "Is Gym Healthy?", gymTags);
+        // 1. Create Users
+        User alice = service.createUser("Alice");
+        User bob = service.createUser("Bob");
+        User charlie = service.createUser("Charlie");
 
-        
-        stackOverflowService.addCommentOnPost(kanan.getId(), question1.getId(), "Why always gym?");
+        // 2. Alice posts a question
+        System.out.println("--- Alice posts a question ---");
+        Tag javaTag = new Tag("java");
+        Tag designPatternsTag = new Tag("design-patterns");
+        Set<Tag> tags = Set.of(javaTag, designPatternsTag);
+        Question question = service.postQuestion(alice.getId(), "How to implement Observer Pattern?", "Details about Observer Pattern...", tags);
+        printReputations(alice, bob, charlie);
 
-        question1.displayComments();
+        // 3. Bob and Charlie post answers
+        System.out.println("\n--- Bob and Charlie post answers ---");
+        Answer bobAnswer = service.postAnswer(bob.getId(), question.getId(), "You can use the java.util.Observer interface.");
+        Answer charlieAnswer = service.postAnswer(charlie.getId(), question.getId(), "A better way is to create your own Observer interface.");
+        printReputations(alice, bob, charlie);
 
-        Answer question1Answer1 = stackOverflowService.postAnswer(kanan.getId(), question1.getId(), "No!");
+        // 4. Voting happens
+        System.out.println("\n--- Voting Occurs ---");
+        service.voteOnPost(alice.getId(), question.getId(), VoteType.UPVOTE); // Alice upvotes her own question
+        service.voteOnPost(bob.getId(), charlieAnswer.getId(), VoteType.UPVOTE); // Bob upvotes Charlie's answer
+        service.voteOnPost(alice.getId(), bobAnswer.getId(), VoteType.DOWNVOTE); // Alice downvotes Bob's answer
+        printReputations(alice, bob, charlie);
 
-        stackOverflowService.addCommentOnPost(vishal.getId(), question1Answer1.getId(), "Fat girl!!");
+        // 5. Alice accepts Charlie's answer
+        System.out.println("\n--- Alice accepts Charlie's answer ---");
+        service.acceptAnswer(alice.getId(), question.getId(), charlieAnswer.getId());
+        printReputations(alice, bob, charlie);
 
-        question1Answer1.displayComments();
+        // 6. Search for questions
+        System.out.println("\n--- (C) Combined Search: Questions by 'Alice' with tag 'java' ---");
+        List<SearchStrategy> filtersC = List.of(
+                new UserSearchStrategy(alice),
+                new TagSearchStrategy(javaTag)
+        );
+        List<Question> searchResults = service.searchQuestions(filtersC);
+        searchResults.forEach(q -> System.out.println("  - Found: " + q.getTitle()));
+    }
 
-        Answer question1Answer2 = stackOverflowService.postAnswer(vishal.getId(), question1.getId(), "Yes!");
-        Answer question1Answer3 = stackOverflowService.postAnswer(het.getId(), question1.getId(), "Drink Beer!");
-
-        stackOverflowService.voteOnPost(vishal.getId(), question1.getId(), VoteType.UPVOTE);
-
-        System.out.println(vishal);
-        System.out.println(kanan);
-
-        List<SeachStrategy> strategies = new ArrayList<>();
-        List<Tag> tagList = new ArrayList<>(gymTags);
-
-        strategies.add(new TagSearchStrategy(tagList));
-
-        stackOverflowService.searchQuestions(strategies).stream().forEach(question -> System.out.println(question.getBody()));
-        
-
-        // Question question2 = stackOverflowService.postQuestion(het.getId(), "Programming Question", "Is software development dead?", gymTags);
-
-        // System.out.println(question2);
-
-        // Answer question2Answer1 = stackOverflowService.postAnswer(kanan.getId(), question2.getId(), "No!");
-        // Answer question2Answer2 = stackOverflowService.postAnswer(vishal.getId(), question2.getId(), "Prepare for UPSC Bro!!");
-        // Answer question2Answer3 = stackOverflowService.postAnswer(het.getId(), question2.getId(), "Do CFA!!");
-        
+    private static void printReputations(User... users) {
+        System.out.println("--- Current Reputations ---");
+        for(User user : users) {
+            System.out.printf("%s: %d\n", user.getName(), user.getReputation());
+        }
     }
 }

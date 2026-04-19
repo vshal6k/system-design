@@ -4,6 +4,6 @@ import java.util.List;
 
 import algomaster.problems.stackoverflow.domainmodel.Question;
 
-public interface SeachStrategy {
+public interface SearchStrategy {
     List<Question> filter(List<Question> questions);
 }
