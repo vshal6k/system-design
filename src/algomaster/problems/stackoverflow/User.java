@@ -1,13 +1,24 @@
 package algomaster.problems.stackoverflow;
 
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class User {
-    private final int id;
+    private final String id;
     private final String name;
-    private int reputation;
+    private AtomicInteger reputation = new AtomicInteger();
     
-    public User(int id, String name) {
-        this.id = id;
+    public User(String name) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
+    }
+
+    public String getId(){
+        return id;
+    }
+
+    public void updateReputation(int reputationChange){
+        reputation.addAndGet(reputationChange);
     }
 
     @Override
@@ -17,36 +28,14 @@ public class User {
         }else return false;
     }
 
-    public void addQuestion(Space space, Question question){
-        space.addQuestion(question);
+    @Override
+    public int hashCode(){
+        return id.hashCode();
     }
 
-    public void addAnswer(Question question, Answer answer){
-        question.addAnswer(answer);
-    }
-
-    public void addComment(InteractiveContent interactiveContent, Comment comment){
-        interactiveContent.addComment(comment);
-    }
-
-    public void upVote(InteractiveContent interactiveContent){
-        interactiveContent.upVote(this);
-    }
-
-    public void downVote(InteractiveContent interactiveContent){
-        interactiveContent.downVote(this);
-    }
-
-    public void setSolution(Question question, Answer answer){
-        question.setSolution(answer, this);
-    }
-
-    public void increaseReputation(){
-        reputation++;
-    }
-
-    public void decreaseReputation(){
-        reputation--;
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", name=" + name + ", reputation=" + reputation + "]";
     }
 
 }

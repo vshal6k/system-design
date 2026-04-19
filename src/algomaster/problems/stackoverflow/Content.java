@@ -1,24 +1,30 @@
 package algomaster.problems.stackoverflow;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 public abstract class Content {
-    private final int id;
-    protected final User author;
-    private final String title;
-    private final String body;
+    private final String id;
+    protected final String body;
+    private final User author;
+    private final LocalDateTime creationTime;
 
-    public Content(int id, User author, String title, String body) {
-        this.id = id;
-        this.author = author;
-        this.title = title;
+    public Content(String body, User author) {
+        this.id = UUID.randomUUID().toString();
         this.body = body;
+        this.author = author;
+        this.creationTime = LocalDateTime.now();
     }
 
-    public String getTitle() {
-        return title;
+    public String getId(){
+        return id;
     }
 
-    public String getBody() {
+    public String getBody(){
         return body;
     }
-    
+
+    public User getAuthor(){
+        return author;
+    }
 }
