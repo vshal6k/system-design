@@ -2,6 +2,7 @@ package algomaster.problems.stackoverflow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -94,13 +95,9 @@ public class StackOverflowService {
     public void acceptAnswer(String userId, String questionId, String answerId) {
         User user = getUser(userId);
         Question question = getQuestion(questionId);
-        Answer answer = answers.get(answerId);
+        Answer answer = getAnswer(answerId);
 
-        if(!question.hasAnswer(answer)) throw new IllegalArgumentException("Question and answer are not related");
-
-        if(!user.equals(question.getAuthor())) throw new IllegalArgumentException("Answers can only be accepted by question authors");
-
-        question.acceptAnswer(answer);
+        question.acceptAnswer(user, answer);
         
     }
 
@@ -118,11 +115,10 @@ public class StackOverflowService {
 
     public List<Question> searchQuestions(List<SeachStrategy> searchStrategies){
         List<Question> questions = this.questions.entrySet().stream().map(entry -> entry.getValue()).toList();
-        List<Question> filteredQuestions = new ArrayList<>();
         for (SeachStrategy seachStrategy : searchStrategies) {
-            filteredQuestions.addAll(seachStrategy.filter(questions));
+            questions = seachStrategy.filter(questions);
         }
-        return filteredQuestions;
+        return questions;
     }
 
 }

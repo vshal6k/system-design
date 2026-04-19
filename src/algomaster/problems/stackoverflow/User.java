@@ -23,7 +23,7 @@ public class User {
 
     @Override
     public boolean equals(Object object){
-        if(object instanceof User user && user.id == this.id){
+        if(object instanceof User user && user.id.equals(this.id)){
             return true;
         }else return false;
     }
