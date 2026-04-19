@@ -1,4 +1,4 @@
-package algomaster.problems.stackoverflow;
+package algomaster.problems.stackoverflow.domainmodel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,10 +8,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import algomaster.problems.stackoverflow.dataclasses.Comment;
-import algomaster.problems.stackoverflow.dataclasses.Event;
 import algomaster.problems.stackoverflow.enums.EventType;
 import algomaster.problems.stackoverflow.enums.VoteType;
+import algomaster.problems.stackoverflow.event.Event;
+import algomaster.problems.stackoverflow.event.PostObserver;
+
 
 public abstract class Post extends Content {
     private List<Comment> comments = new CopyOnWriteArrayList<>();

@@ -1,4 +1,4 @@
-package algomaster.problems.stackoverflow;
+package algomaster.problems.stackoverflow.domainmodel;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;

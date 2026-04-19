@@ -1,9 +1,6 @@
-package algomaster.problems.stackoverflow.dataclasses;
+package algomaster.problems.stackoverflow.domainmodel;
 
 import java.time.LocalDateTime;
-
-import algomaster.problems.stackoverflow.Content;
-import algomaster.problems.stackoverflow.User;
 
 public class Comment extends Content{
 

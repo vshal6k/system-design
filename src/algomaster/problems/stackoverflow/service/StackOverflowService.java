@@ -1,4 +1,4 @@
-package algomaster.problems.stackoverflow;
+package algomaster.problems.stackoverflow.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,9 +8,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import algomaster.problems.stackoverflow.dataclasses.Comment;
-import algomaster.problems.stackoverflow.dataclasses.Tag;
+import algomaster.problems.stackoverflow.domainmodel.Answer;
+import algomaster.problems.stackoverflow.domainmodel.Comment;
+import algomaster.problems.stackoverflow.domainmodel.Post;
+import algomaster.problems.stackoverflow.domainmodel.Question;
+import algomaster.problems.stackoverflow.domainmodel.Tag;
+import algomaster.problems.stackoverflow.domainmodel.User;
 import algomaster.problems.stackoverflow.enums.VoteType;
+import algomaster.problems.stackoverflow.event.PostObserver;
+import algomaster.problems.stackoverflow.event.ReputationManager;
 
 public class StackOverflowService {
     private ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();

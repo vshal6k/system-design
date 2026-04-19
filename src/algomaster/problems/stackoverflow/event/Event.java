@@ -1,7 +1,7 @@
-package algomaster.problems.stackoverflow.dataclasses;
+package algomaster.problems.stackoverflow.event;
 
-import algomaster.problems.stackoverflow.Post;
-import algomaster.problems.stackoverflow.User;
+import algomaster.problems.stackoverflow.domainmodel.Post;
+import algomaster.problems.stackoverflow.domainmodel.User;
 import algomaster.problems.stackoverflow.enums.EventType;
 
 public class Event {

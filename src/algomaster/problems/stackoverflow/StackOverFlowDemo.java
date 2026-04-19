@@ -5,8 +5,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import algomaster.problems.stackoverflow.dataclasses.Tag;
+import algomaster.problems.stackoverflow.domainmodel.Answer;
+import algomaster.problems.stackoverflow.domainmodel.Question;
+import algomaster.problems.stackoverflow.domainmodel.Tag;
+import algomaster.problems.stackoverflow.domainmodel.User;
 import algomaster.problems.stackoverflow.enums.VoteType;
+import algomaster.problems.stackoverflow.service.SeachStrategy;
+import algomaster.problems.stackoverflow.service.StackOverflowService;
+import algomaster.problems.stackoverflow.service.TagSearchStrategy;
 
 public class StackOverFlowDemo {
 

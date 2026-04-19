@@ -1,9 +1,10 @@
-package algomaster.problems.stackoverflow;
+package algomaster.problems.stackoverflow.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import algomaster.problems.stackoverflow.dataclasses.Tag;
+import algomaster.problems.stackoverflow.domainmodel.Question;
+import algomaster.problems.stackoverflow.domainmodel.Tag;
 
 public class TagSearchStrategy implements SeachStrategy {
     private final List<Tag> tags;

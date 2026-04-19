@@ -1,4 +1,4 @@
-package algomaster.problems.stackoverflow.dataclasses;
+package algomaster.problems.stackoverflow.domainmodel;
 
 public class Tag {
     private final String name;

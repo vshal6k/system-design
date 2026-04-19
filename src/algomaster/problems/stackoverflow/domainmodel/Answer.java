@@ -1,4 +1,4 @@
-package algomaster.problems.stackoverflow;
+package algomaster.problems.stackoverflow.domainmodel;
 
 import algomaster.problems.stackoverflow.enums.EventType;
 import algomaster.problems.stackoverflow.enums.VoteType;

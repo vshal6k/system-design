@@ -1,7 +1,9 @@
-package algomaster.problems.stackoverflow;
+package algomaster.problems.stackoverflow.service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import algomaster.problems.stackoverflow.domainmodel.Question;
 
 public class KeyWordSearchStrategy implements SeachStrategy{
     private final List<String> keywords; 

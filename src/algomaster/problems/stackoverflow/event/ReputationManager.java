@@ -1,6 +1,7 @@
-package algomaster.problems.stackoverflow;
+package algomaster.problems.stackoverflow.event;
 
-import algomaster.problems.stackoverflow.dataclasses.Event;
+import algomaster.problems.stackoverflow.domainmodel.Post;
+import algomaster.problems.stackoverflow.domainmodel.User;
 
 public class ReputationManager implements PostObserver{
     public static final int QUESTION_UPVOTE_REP = 5;

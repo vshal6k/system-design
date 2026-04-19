@@ -1,4 +1,4 @@
-package algomaster.problems.stackoverflow;
+package algomaster.problems.stackoverflow.domainmodel;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,10 +9,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import algomaster.problems.stackoverflow.dataclasses.Event;
-import algomaster.problems.stackoverflow.dataclasses.Tag;
 import algomaster.problems.stackoverflow.enums.EventType;
 import algomaster.problems.stackoverflow.enums.VoteType;
+import algomaster.problems.stackoverflow.event.Event;
 
 public class Question extends Post {
     private String title;

@@ -1,4 +1,4 @@
-package algomaster.problems.stackoverflow;
+package algomaster.problems.stackoverflow.domainmodel;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
