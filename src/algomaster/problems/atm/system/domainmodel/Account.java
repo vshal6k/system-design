@@ -1,4 +1,4 @@
-package algomaster.problems.atm.domainmodel;
+package algomaster.problems.atm.system.domainmodel;
 
 import java.math.BigDecimal;
 
@@ -19,12 +19,12 @@ public class Account {
         return balance;
     }
 
-    public void deposit(BigDecimal amount) {
+    public synchronized void  deposit(BigDecimal amount) {
         balance = balance.add(amount);
         System.out.println("Account: Deposit " + amount + " in " + number);
     }
 
-    public boolean withdraw(BigDecimal amount) {
+    public synchronized boolean withdraw(BigDecimal amount) {
         if (balance.compareTo(amount) < 0) {
             return false;
         }

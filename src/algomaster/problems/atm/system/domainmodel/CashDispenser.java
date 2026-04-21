@@ -1,6 +1,6 @@
-package algomaster.problems.atm.domainmodel;
+package algomaster.problems.atm.system.domainmodel;
 
-import algomaster.problems.atm.chainofresponsibility.DispenseChain;
+import algomaster.problems.atm.system.chainofresponsibility.DispenseChain;
 
 public class CashDispenser {
     private DispenseChain chain;

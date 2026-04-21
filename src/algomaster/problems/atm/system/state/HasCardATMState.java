@@ -1,8 +1,7 @@
-package algomaster.problems.atm.state;
+package algomaster.problems.atm.system.state;
 
-import algomaster.problems.atm.ATMSystem;
-import algomaster.problems.atm.domainmodel.Card;
-import algomaster.problems.atm.enums.OperationType;
+import algomaster.problems.atm.system.domainmodel.Card;
+import algomaster.problems.atm.system.enums.OperationType;
 
 public class HasCardATMState implements ATMState {
 

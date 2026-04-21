@@ -1,16 +1,15 @@
-package algomaster.problems.atm.service;
+package algomaster.problems.atm.system.service;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import algomaster.problems.atm.domainmodel.Account;
-import algomaster.problems.atm.domainmodel.Card;
+import algomaster.problems.atm.system.domainmodel.Account;
+import algomaster.problems.atm.system.domainmodel.Card;
 
 public class BankingService {
-    private Map<String, Card> cards = new HashMap<>();
-    private Map<String, Account> accounts = new HashMap<>();
-    private Map<String, String> cardAccountMap = new HashMap<>();
+    private ConcurrentHashMap<String, Card> cards = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Account> accounts = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, String> cardAccountMap = new ConcurrentHashMap<>();
 
     public BankingService() {
         // Create sample accounts and cards

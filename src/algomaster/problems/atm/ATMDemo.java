@@ -1,7 +1,8 @@
 package algomaster.problems.atm;
 
-import algomaster.problems.atm.domainmodel.Card;
-import algomaster.problems.atm.enums.OperationType;
+import algomaster.problems.atm.system.domainmodel.Card;
+import algomaster.problems.atm.system.enums.OperationType;
+import algomaster.problems.atm.system.state.ATMSystem;
 
 public class ATMDemo {
     public static void main(String[] args) {

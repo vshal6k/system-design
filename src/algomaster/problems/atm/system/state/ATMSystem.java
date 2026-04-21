@@ -1,23 +1,21 @@
-package algomaster.problems.atm;
+package algomaster.problems.atm.system.state;
 
 import java.math.BigDecimal;
 
-import algomaster.problems.atm.chainofresponsibility.CashDispenser100;
-import algomaster.problems.atm.chainofresponsibility.CashDispenser20;
-import algomaster.problems.atm.chainofresponsibility.CashDispenser50;
-import algomaster.problems.atm.chainofresponsibility.DispenseChain;
-import algomaster.problems.atm.domainmodel.Card;
-import algomaster.problems.atm.domainmodel.CashDispenser;
-import algomaster.problems.atm.enums.OperationType;
-import algomaster.problems.atm.service.BankingService;
-import algomaster.problems.atm.state.ATMState;
-import algomaster.problems.atm.state.IdleATMState;
+import algomaster.problems.atm.system.chainofresponsibility.CashDispenser100;
+import algomaster.problems.atm.system.chainofresponsibility.CashDispenser20;
+import algomaster.problems.atm.system.chainofresponsibility.CashDispenser50;
+import algomaster.problems.atm.system.chainofresponsibility.DispenseChain;
+import algomaster.problems.atm.system.domainmodel.Card;
+import algomaster.problems.atm.system.domainmodel.CashDispenser;
+import algomaster.problems.atm.system.enums.OperationType;
+import algomaster.problems.atm.system.service.BankingService;
 
 public class ATMSystem {
     private ATMState state;
     private Card card;
-    private BankingService bankingService;
-    private CashDispenser cashDispenser;
+    private final BankingService bankingService;
+    private final CashDispenser cashDispenser;
 
     public ATMSystem() {
         state = new IdleATMState();
@@ -49,28 +47,28 @@ public class ATMSystem {
         state.ejectCard(this);
     }
 
-    public Card getCard() {
+    Card getCard() {
         return card;
     }
 
-    public void setCard(Card card) {
+    void setCard(Card card) {
         this.card = card;
     }
 
-    public void setState(ATMState atmState) {
+    void setState(ATMState atmState) {
         this.state = atmState;
     }
 
-    public boolean authenticate(String pin) {
+    boolean authenticate(String pin) {
         return card.isPinCorrect(pin);
     }
 
-    public void checkBalance() {
+    void checkBalance() {
         BigDecimal balance = bankingService.checkBalance(this.card);
         System.out.println("ATM: Account Balance: " + balance);
     }
 
-    public void withdraw(int amount) {
+    void withdraw(int amount) {
         BigDecimal balance = bankingService.checkBalance(card);
         BigDecimal amountBigDecimal = BigDecimal.valueOf(amount);
 
@@ -84,7 +82,7 @@ public class ATMSystem {
         cashDispenser.dispense(amount);
     }
 
-    public void deposit(int amount) {
+    void deposit(int amount) {
         bankingService.deposit(card, BigDecimal.valueOf(amount));
     }
 

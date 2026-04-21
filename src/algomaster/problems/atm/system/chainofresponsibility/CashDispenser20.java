@@ -1,4 +1,4 @@
-package algomaster.problems.atm.chainofresponsibility;
+package algomaster.problems.atm.system.chainofresponsibility;
 
 public class CashDispenser20 extends BaseCashDispenser {
 

@@ -1,4 +1,4 @@
-package algomaster.problems.atm.domainmodel;
+package algomaster.problems.atm.system.domainmodel;
 
 public class Card {
     private final String pin;

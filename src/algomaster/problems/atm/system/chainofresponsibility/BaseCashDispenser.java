@@ -1,4 +1,4 @@
-package algomaster.problems.atm.chainofresponsibility;
+package algomaster.problems.atm.system.chainofresponsibility;
 
 public abstract class BaseCashDispenser implements DispenseChain {
     private DispenseChain next;
@@ -16,7 +16,7 @@ public abstract class BaseCashDispenser implements DispenseChain {
     }
 
     @Override
-    public boolean dispense(int amount) {
+    public synchronized boolean dispense(int amount) {
         if (amount < 0)
             throw new IllegalArgumentException("Amount cannot be less than zero");
 
@@ -38,7 +38,7 @@ public abstract class BaseCashDispenser implements DispenseChain {
     }
 
     @Override
-    public boolean canDispense(int amount) {
+    public synchronized boolean canDispense(int amount) {
         if (amount < 0)
             return false;
 
