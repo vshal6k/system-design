@@ -1,7 +1,5 @@
 package algomaster.problems.atm.state;
 
-import java.math.BigDecimal;
-
 import algomaster.problems.atm.ATMSystem;
 import algomaster.problems.atm.domainmodel.Card;
 import algomaster.problems.atm.enums.OperationType;
@@ -22,7 +20,7 @@ public class HasCardATMState implements ATMState {
     }
 
     @Override
-    public void chooseOperation(OperationType operationType, BigDecimal amount,  ATMSystem atmSystem) {
+    public void chooseOperation(OperationType operationType, int amount,  ATMSystem atmSystem) {
         throw new IllegalStateException("Please enter pin to choose an operation.");
     }
 

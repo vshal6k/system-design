@@ -1,7 +1,5 @@
 package algomaster.problems.atm.state;
 
-import java.math.BigDecimal;
-
 import algomaster.problems.atm.ATMSystem;
 import algomaster.problems.atm.domainmodel.Card;
 import algomaster.problems.atm.enums.OperationType;
@@ -16,10 +14,12 @@ public interface ATMState {
     void enterPin(String pin, ATMSystem atmSystem);
 
     // ATM should provide a user friendly method to choose the operation
-    void chooseOperation(OperationType operationType, BigDecimal amount, ATMSystem atmSystem);
+    void chooseOperation(OperationType operationType, int amount, ATMSystem atmSystem);
 
     // ATM should choose a user friendly method to eject the card
     default void ejectCard(ATMSystem atmSystem) {
+        if (atmSystem.getCard() == null)
+            throw new IllegalArgumentException("Enter a card to eject it.");
         atmSystem.setCard(null);
         atmSystem.setState(new IdleATMState());
     }

@@ -20,17 +20,17 @@ public class Account {
     }
 
     public void deposit(BigDecimal amount) {
-        if (amount == null)
-            return;
-
         balance = balance.add(amount);
+        System.out.println("Account: Deposit " + amount + " in " + number);
     }
 
-    public void withdraw(BigDecimal amount) {
-        if (amount == null)
-            return;
-        if (balance.compareTo(amount) >= 0)
-            balance = balance.subtract(amount);
+    public boolean withdraw(BigDecimal amount) {
+        if (balance.compareTo(amount) < 0) {
+            return false;
+        }
+        balance = balance.subtract(amount);
+        System.out.println("Account: Withdraw " + amount + " from " + number);
+        return true;
     }
 
 }

@@ -1,5 +1,6 @@
 package algomaster.problems.atm.state;
 
+
 import java.math.BigDecimal;
 
 import algomaster.problems.atm.ATMSystem;
@@ -20,7 +21,7 @@ public class IdleATMState implements ATMState {
     }
 
     @Override
-    public void chooseOperation(OperationType operationType, BigDecimal amount, ATMSystem atmSystem) {
+    public void chooseOperation(OperationType operationType, int amount, ATMSystem atmSystem) {
         throw new IllegalStateException("Please enter a card first before choosing an operation.");
     }
 

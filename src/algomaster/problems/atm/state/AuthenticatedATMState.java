@@ -19,7 +19,7 @@ public class AuthenticatedATMState implements ATMState {
     }
 
     @Override
-    public void chooseOperation(OperationType operationType, BigDecimal amount, ATMSystem atmSystem) {
+    public void chooseOperation(OperationType operationType, int amount, ATMSystem atmSystem) {
         switch (operationType) {
             case CHECK_BALANCE:
                 atmSystem.checkBalance();
