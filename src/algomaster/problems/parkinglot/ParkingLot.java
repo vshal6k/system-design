@@ -1,39 +1,36 @@
 package algomaster.problems.parkinglot;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import algomaster.problems.parkinglot.domainmodel.Floor;
 import algomaster.problems.parkinglot.domainmodel.Spot;
 import algomaster.problems.parkinglot.domainmodel.Ticket;
 import algomaster.problems.parkinglot.strategy.fee.FeeStrategy;
-import algomaster.problems.parkinglot.strategy.fee.FlatRateFeeStrategy;
-import algomaster.problems.parkinglot.strategy.parking.BestFitStrategy;
 import algomaster.problems.parkinglot.strategy.parking.ParkingStrategy;
 import algomaster.problems.parkinglot.vehicle.Vehicle;
 
 public class ParkingLot {
-    private static ParkingLot INSTANCE;
-    private final List<Floor> floors = Collections.synchronizedList(new ArrayList<>());
+    private static volatile ParkingLot INSTANCE;
+    private final List<Floor> floors = new CopyOnWriteArrayList<>();
     private Map<String, Ticket> vehicleTicketMap = new ConcurrentHashMap<>();
-    private ParkingStrategy parkingStrategy;
-    private FeeStrategy feeStrategy;
+    private final ParkingStrategy parkingStrategy;
+    private final FeeStrategy feeStrategy;
 
-    private ParkingLot() {
-        this.parkingStrategy = new BestFitStrategy();
-        this.feeStrategy = new FlatRateFeeStrategy();
+    private ParkingLot(ParkingStrategy parkingStrategy, FeeStrategy feeStrategy) {
+        this.parkingStrategy = parkingStrategy;
+        this.feeStrategy = feeStrategy;
     }
 
-    public static ParkingLot getInstance() {
+    public static ParkingLot getInstance(ParkingStrategy parkingStrategy, FeeStrategy feeStrategy) {
         if (ParkingLot.INSTANCE == null) {
             synchronized (ParkingLot.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new ParkingLot();
+                    INSTANCE = new ParkingLot(parkingStrategy, feeStrategy);
                 }
             }
         }
@@ -45,6 +42,10 @@ public class ParkingLot {
     }
 
     public synchronized Optional<Ticket> park(Vehicle vehicle) {
+
+        if (vehicleTicketMap.get(vehicle.getId()) != null)
+            throw new IllegalArgumentException("Vehicle is already parked");
+
         Optional<Spot> availableSpot = parkingStrategy.findSpot(floors, vehicle);
         if (availableSpot.isEmpty()) {
             System.out.println("No spots available for the vehicle.");
@@ -72,14 +73,6 @@ public class ParkingLot {
         ticket.setExitTime();
         BigDecimal fee = feeStrategy.calculate(ticket);
         return Optional.of(fee);
-    }
-
-    public void setParkingStrategy(ParkingStrategy parkingStrategy) {
-        this.parkingStrategy = parkingStrategy;
-    }
-
-    public void setFeeStrategy(FeeStrategy feeStrategy) {
-        this.feeStrategy = feeStrategy;
     }
 
 }

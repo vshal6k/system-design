@@ -8,6 +8,7 @@ import algomaster.problems.parkinglot.domainmodel.Spot;
 import algomaster.problems.parkinglot.domainmodel.Ticket;
 import algomaster.problems.parkinglot.enums.SpotSize;
 import algomaster.problems.parkinglot.strategy.fee.VehicleBasedFeeStrategy;
+import algomaster.problems.parkinglot.strategy.parking.BestFitStrategy;
 import algomaster.problems.parkinglot.vehicle.Bike;
 import algomaster.problems.parkinglot.vehicle.Car;
 import algomaster.problems.parkinglot.vehicle.Truck;
@@ -15,7 +16,7 @@ import algomaster.problems.parkinglot.vehicle.Vehicle;
 
 public class ParkingLotDemo {
     public static void main(String[] args) {
-        ParkingLot parkingLot = ParkingLot.getInstance();
+        ParkingLot parkingLot = ParkingLot.getInstance(new BestFitStrategy(), new VehicleBasedFeeStrategy());
 
         // 1. Initialize the parking lot with floors and spots
         Floor floor1 = new Floor(1);
@@ -30,7 +31,6 @@ public class ParkingLotDemo {
         parkingLot.addFloor(floor1);
         parkingLot.addFloor(floor2);
 
-        parkingLot.setFeeStrategy(new VehicleBasedFeeStrategy());
 
         // 2. Simulate vehicle entries
         System.out.println("\n--- Vehicle Entries ---");
