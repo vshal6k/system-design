@@ -3,13 +3,13 @@ package algomaster.problems.parkinglot.service;
 import java.math.BigDecimal;
 
 import algomaster.problems.parkinglot.domainmodel.Ticket;
-import algomaster.problems.parkinglot.pricingstrategy.PricingStrategy;
+import algomaster.problems.parkinglot.strategy.fee.FeeStrategy;
 
 //Responsible for creating bill from tickets
 public class BillingService {
-    private final PricingStrategy pricingStrategy;
+    private final FeeStrategy pricingStrategy;
 
-    public BillingService(PricingStrategy pricingStrategy) {
+    public BillingService(FeeStrategy pricingStrategy) {
         this.pricingStrategy = pricingStrategy;
     }
 

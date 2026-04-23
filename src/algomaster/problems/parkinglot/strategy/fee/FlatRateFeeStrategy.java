@@ -1,4 +1,4 @@
-package algomaster.problems.parkinglot.pricingstrategy;
+package algomaster.problems.parkinglot.strategy.fee;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 import algomaster.problems.parkinglot.domainmodel.Ticket;
 
-public class FlatRatePricing implements PricingStrategy {
+public class FlatRateFeeStrategy implements FeeStrategy {
     public static final int RATE_PER_SECOND = 10;
 
     @Override

@@ -3,6 +3,8 @@ package algomaster.problems.parkinglot.domainmodel;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import algomaster.problems.parkinglot.vehicle.Vehicle;
+
 public class Ticket {
     private final String id;
     private final Vehicle vehicle;

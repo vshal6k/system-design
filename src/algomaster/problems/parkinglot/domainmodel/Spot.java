@@ -3,70 +3,64 @@ package algomaster.problems.parkinglot.domainmodel;
 import java.util.UUID;
 
 import algomaster.problems.parkinglot.enums.SpotSize;
-import algomaster.problems.parkinglot.enums.VehicleType;
+import algomaster.problems.parkinglot.enums.VehicleSize;
+import algomaster.problems.parkinglot.vehicle.Vehicle;
 
 public class Spot {
-    private final String id;
+    private final String spotId;
+    private boolean isOccupied;
     private final SpotSize spotSize;
-    private Vehicle vehicle;
-
-    public String getId() {
-        return id;
-    }
-
-    public Vehicle getVehicle() {
-        return vehicle;
-    }
-
-    public Spot(SpotSize spotSize, Vehicle vehicle) {
-        this.id = UUID.randomUUID().toString();
-        this.spotSize = spotSize;
-        this.vehicle = vehicle;
-    }
+    private Vehicle parkedVehicle;
 
     public Spot(SpotSize spotSize) {
-        this(spotSize, null);
+        this.spotId = UUID.randomUUID().toString();
+        this.spotSize = spotSize;
+        this.isOccupied = false;
+        this.parkedVehicle = null;
     }
 
-    public void park(Vehicle vehicle) {
-        this.vehicle = vehicle;
+    public String getSpotId() {
+        return spotId;
     }
 
     public SpotSize getSpotSize() {
         return spotSize;
     }
 
-    public boolean isAvailable() {
-        return (this.vehicle == null);
+    public synchronized boolean isAvailable() {
+        return !isOccupied;
     }
 
-    public boolean canPark(Vehicle vehicle) {
-        if (this.vehicle != null)
-            return false;
+    public boolean canFitVehicle(Vehicle vehicle) {
+        VehicleSize vehicleSize = vehicle.getSize();
+        boolean canFitVehicle = false;
 
-        VehicleType vehicleType = vehicle.getVehicleType();
-        boolean canPark = false;
-
-        switch (vehicleType) {
-            case BIKE:
+        switch (vehicleSize) {
+            case SMALL:
                 if (SpotSize.SMALL.equals(spotSize))
-                    canPark = true;
+                    canFitVehicle = true;
                 break;
-            case CAR:
+            case MEDIUM:
                 if (SpotSize.MEDIUM.equals(spotSize) || SpotSize.LARGE.equals(spotSize))
-                    canPark = true;
+                    canFitVehicle = true;
                 break;
-            case TRUCK:
+            case LARGE:
                 if (SpotSize.LARGE.equals(spotSize))
-                    canPark = true;
+                    canFitVehicle = true;
                 break;
         }
 
-        return canPark;
+        return canFitVehicle;
     }
 
-    public void unPark() {
-        this.vehicle = null;
+    public synchronized void unPark() {
+        this.parkedVehicle = null;
+        this.isOccupied = false;
+    }
+
+    public synchronized void park(Vehicle vehicle) {
+        this.parkedVehicle = vehicle;
+        this.isOccupied = true;
     }
 
 }

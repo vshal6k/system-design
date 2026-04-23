@@ -1,10 +1,10 @@
-package algomaster.problems.parkinglot.pricingstrategy;
+package algomaster.problems.parkinglot.strategy.fee;
 
 import java.math.BigDecimal;
 
 import algomaster.problems.parkinglot.domainmodel.Ticket;
 
-public interface PricingStrategy {
+public interface FeeStrategy {
 
     BigDecimal calculate(Ticket ticket);
 
