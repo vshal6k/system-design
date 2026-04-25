@@ -1,44 +1,56 @@
 package algomaster.problems.notificationsystem;
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import algomaster.problems.notificationsystem.entities.NotificationRequest;
 import algomaster.problems.notificationsystem.entities.User;
 import algomaster.problems.notificationsystem.enums.Channel;
-import algomaster.problems.notificationsystem.notification.Notification;
+import algomaster.problems.notificationsystem.sender.Sender;
+import algomaster.problems.notificationsystem.senderregistry.SenderRegistry;
 
-public class NotificationSystem {
-    private final Queue<Notification> notificationSendQueue = new ConcurrentLinkedQueue<>();
+public class NotificationSystem implements AutoCloseable {
     public static final int MAX_RETRIES = 3;
-    public static final long RETRY_DELAY = 3000;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(3);
+    public static final long RETRY_DELAY = 3;
 
-    private final Runnable notificationSendingTask = () -> {
-        if (notificationSendQueue.isEmpty())
-            return;
+    private volatile boolean closed = false;
+    private final SenderRegistry senderRegistry;
+    private final ScheduledExecutorService retryScheduler;
+    private final ExecutorService workerPool;
 
-        Notification notification = notificationSendQueue.poll();
-        int retryCount = 0;
-        while (retryCount < NotificationSystem.MAX_RETRIES + 1) {
-            if (retryCount > 0) {
-                System.out.println("Notification: " + notification.toString() + " Retry Count:" + retryCount);
-                try {
-                    Thread.sleep(RETRY_DELAY);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-            if (notification.send())
-                break;
-            retryCount++;
+    public NotificationSystem(SenderRegistry senderRegistry) {
+        closed = false;
+        this.senderRegistry = senderRegistry;
+        retryScheduler = Executors.newScheduledThreadPool(3);
+        workerPool = Executors.newFixedThreadPool(3);
+    }
+
+    private void sendWithRetry(NotificationRequest request, int attempt) {
+        Sender sender = senderRegistry.getSender(request.getChannel());
+
+        try {
+            sender.send(request);
+        } catch (Exception e) {
+            System.out.println("Error While Sending " + request.toString() + " Attempt: " + attempt  + 1);
+            if (attempt >= MAX_RETRIES)
+                return;
+
+            if(closed) return;
+
+            retryScheduler.schedule(
+                    () -> workerPool.submit(
+                            () -> sendWithRetry(request, attempt + 1)),
+                    RETRY_DELAY, TimeUnit.SECONDS);
         }
 
-    };
+    }
 
-    private Notification createNotification(User recipient, Channel channel, String subject, String body) {
-        Notification.NotificationBuilder builder = new Notification.NotificationBuilder(recipient, channel, body);
+    private NotificationRequest createNotification(User recipient, Channel channel, String subject, String body) {
+        NotificationRequest.NotificationBuilder builder = new NotificationRequest.
+
+                NotificationBuilder(recipient, channel, body);
 
         if (subject != null)
             builder.subject(subject);
@@ -47,15 +59,31 @@ public class NotificationSystem {
     }
 
     public void sendNotification(User recipient, Channel channel, String subject, String body) {
-        Notification notification = createNotification(recipient, channel, subject, body);
-        notificationSendQueue.add(notification);
-        executorService.submit(notificationSendingTask);
+        if (closed)
+            throw new IllegalStateException("Notification system is closed.");
+
+        NotificationRequest notification = createNotification(recipient, channel, subject, body);
+        workerPool.submit(() -> sendWithRetry(notification, 0));
+
     }
 
-    public synchronized void closeSystem() {
-        if (!this.executorService.isShutdown()) {
-            this.executorService.shutdown();
-        } else
-            throw new IllegalStateException("Notification system is closed already.");
+    @Override
+    public void close() throws Exception {
+        if (closed)
+            throw new IllegalStateException("Notification system is closed.");
+
+        closed = true;
+        retryScheduler.shutdown();
+        workerPool.shutdown();
+
+        try {
+            retryScheduler.awaitTermination(10, TimeUnit.SECONDS);
+            workerPool.awaitTermination(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            retryScheduler.shutdownNow();
+            workerPool.shutdownNow();
+        }
+
     }
 }

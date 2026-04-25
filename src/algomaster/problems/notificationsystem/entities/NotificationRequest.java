@@ -1,11 +1,10 @@
-package algomaster.problems.notificationsystem.notification;
+package algomaster.problems.notificationsystem.entities;
 
 import java.util.UUID;
 
-import algomaster.problems.notificationsystem.entities.User;
 import algomaster.problems.notificationsystem.enums.Channel;
 
-public abstract class Notification {
+public class NotificationRequest {
     private final String notificationId;
     protected final User recipient;
     protected final Channel channel;
@@ -16,7 +15,13 @@ public abstract class Notification {
         return notificationId;
     }
 
-    public User getRecipient() {
+    @Override
+	public String toString() {
+		return "NotificationRequest [recipient=" + recipient.getUserName() + ", channel="
+				+ channel + ", subject=" + subject + ", body=" + body + "]";
+	}
+
+	public User getRecipient() {
         return recipient;
     }
 
@@ -32,9 +37,7 @@ public abstract class Notification {
         return body;
     }
 
-    public abstract boolean send();
-
-    protected Notification(NotificationBuilder notificationBuilder) {
+    protected NotificationRequest(NotificationBuilder notificationBuilder) {
         this.notificationId = UUID.randomUUID().toString();
         this.body = notificationBuilder.body;
         this.channel = notificationBuilder.channel;
@@ -59,7 +62,7 @@ public abstract class Notification {
             return this;
         }
 
-        public Notification build() {
+        public NotificationRequest build() {
             if (body == null)
                 throw new IllegalArgumentException("Body cannot be null");
             if (recipient == null)
@@ -67,31 +70,8 @@ public abstract class Notification {
             if (channel == null)
                 throw new IllegalArgumentException("Channel cannot be null");
 
-            Notification notification;
-
-            switch (channel) {
-                case EMAIL:
-                    notification = new EmailNotification(this);
-                    break;
-                case PUSH:
-                    notification = new PushNotification(this);
-                    break;
-                case SMS:
-                    notification = new SMSNotification(this);
-                    break;
-                default:
-                    notification = null;
-                    break;
-            }
-
-            return notification;
+            return new NotificationRequest(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Notification [recipient=" + recipient.getUserName() + ", channel=" + channel
-                + ", subject=" + subject + ", body=" + body + "]";
     }
 
 }
