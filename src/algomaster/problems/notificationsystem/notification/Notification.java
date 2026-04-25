@@ -7,8 +7,8 @@ import algomaster.problems.notificationsystem.enums.Channel;
 
 public abstract class Notification {
     private final String notificationId;
-    private final User recipient;
-    private final Channel channel;
+    protected final User recipient;
+    protected final Channel channel;
     private final String subject;
     private final String body;
 
@@ -32,16 +32,7 @@ public abstract class Notification {
         return body;
     }
 
-    public boolean send() {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        System.out.println("Notification sent to " + recipient.getUserName() + " through " + channel);
-        return true;
-
-    }
+    public abstract boolean send();
 
     protected Notification(NotificationBuilder notificationBuilder) {
         this.notificationId = UUID.randomUUID().toString();
