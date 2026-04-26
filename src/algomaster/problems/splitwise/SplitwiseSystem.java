@@ -12,6 +12,7 @@ import algomaster.problems.splitwise.entities.Group;
 import algomaster.problems.splitwise.entities.PaymentActivity;
 import algomaster.problems.splitwise.entities.Settlement;
 import algomaster.problems.splitwise.entities.User;
+import algomaster.problems.splitwise.splitstrategy.EqualSplitStrategy;
 import algomaster.problems.splitwise.splitstrategy.SplitStrategy;
 
 public class SplitwiseSystem {
@@ -32,8 +33,15 @@ public class SplitwiseSystem {
         return group;
     }
 
-    public Expense addExpense(User paidBy, Group group, BigDecimal amount, SplitStrategy splitStrategy) {
+    public Expense addGroupExpense(User paidBy, Group group, BigDecimal amount, SplitStrategy splitStrategy) {
         Expense expense = new Expense(amount, paidBy, group.getUsers(), splitStrategy);
+        balanceRegistry.onExpenseAddition(expense);
+        activities.add(expense);
+        return expense;
+    }
+
+    public Expense addIndividualExpense(User paidBy, User recevier, BigDecimal amount) {
+        Expense expense = new Expense(amount, paidBy, List.of(recevier), new EqualSplitStrategy());
         balanceRegistry.onExpenseAddition(expense);
         activities.add(expense);
         return expense;

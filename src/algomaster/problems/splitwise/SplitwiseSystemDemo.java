@@ -14,35 +14,38 @@ import algomaster.problems.splitwise.splitstrategy.PercentageSplitStrategy;
 public class SplitwiseSystemDemo {
     public static void main(String[] args) {
         SplitwiseSystem system = new SplitwiseSystem();
-        User vishal = system.addUser("Vishal", "vshal6k@gmail.com", "8770556229");
-        User kanan = system.addUser("Kanan", "skanan096@gmail.com", "9098752170");
-        User het = system.addUser("Het", "het1236@gmail.com", "9098234170");
+        // User vishal = system.addUser("Vishal", "vshal6k@gmail.com", "8770556229");
+        // User kanan = system.addUser("Kanan", "skanan096@gmail.com", "9098752170");
+        // User het = system.addUser("Het", "het1236@gmail.com", "9098234170");
 
-        List<User> users = List.of(vishal, kanan, het);
+        // List<User> users = List.of(vishal, kanan, het);
 
-        Group myGroup = system.createGroup("My Group", users);
+        // Group myGroup = system.createGroup("My Group", users);
 
-        system.addExpense(vishal, myGroup, BigDecimal.valueOf(30), new EqualSplitStrategy());
+        // system.addGroupExpense(vishal, myGroup, BigDecimal.valueOf(30), new
+        // EqualSplitStrategy());
 
-        system.displayAmountOwed(kanan);
-        system.displayAmountOwed(het);
-        system.displayAmountOwed(vishal);
+        // system.displayAmountOwed(kanan);
+        // system.displayAmountOwed(het);
+        // system.displayAmountOwed(vishal);
 
-        System.out.println("================");
+        // System.out.println("================");
 
-        system.addExpense(het, myGroup, BigDecimal.valueOf(30), new EqualSplitStrategy());
+        // system.addGroupExpense(het, myGroup, BigDecimal.valueOf(30), new
+        // EqualSplitStrategy());
 
-        system.displayAmountOwed(kanan);
-        system.displayAmountOwed(het);
-        system.displayAmountOwed(vishal);
+        // system.displayAmountOwed(kanan);
+        // system.displayAmountOwed(het);
+        // system.displayAmountOwed(vishal);
 
-        System.out.println("================");
+        // System.out.println("================");
 
-        system.addExpense(kanan, myGroup, BigDecimal.valueOf(30), new EqualSplitStrategy());
+        // system.addGroupExpense(kanan, myGroup, BigDecimal.valueOf(30), new
+        // EqualSplitStrategy());
 
-        system.displayAmountOwed(kanan);
-        system.displayAmountOwed(het);
-        system.displayAmountOwed(vishal);
+        // system.displayAmountOwed(kanan);
+        // system.displayAmountOwed(het);
+        // system.displayAmountOwed(vishal);
 
         // system.settleFull(kanan, vishal);
 
@@ -62,7 +65,7 @@ public class SplitwiseSystemDemo {
 
         // Group friendGroup = system.createGroup("Friends", friends);
 
-        // system.addExpense(aman, friendGroup, BigDecimal.valueOf(20), new
+        // system.addGroupExpense(aman, friendGroup, BigDecimal.valueOf(20), new
         // PercentageSplitStrategy(userPercentMap));
 
         // system.displayAmountOwed(aman);
@@ -82,12 +85,34 @@ public class SplitwiseSystemDemo {
 
         // Group friendGroup = system.createGroup("Friends", friends);
 
-        // system.addExpense(soumya, friendGroup, BigDecimal.valueOf(7), new
+        // system.addGroupExpense(soumya, friendGroup, BigDecimal.valueOf(7), new
         // ExactAmountSplitStrategy(userPercentMap));
 
         // system.displayAmountOwed(soumya);
         // system.displayAmountOwed(vaidehi);
         // system.displayAmountOwed(apeksha);
+
+        User katy = system.addUser("katy", "vshal6k@gmail.com", "8770556229");
+        User hary = system.addUser("hary", "skanan096@gmail.com", "9098752170");
+        User john = system.addUser("john", "het1236@gmail.com", "9098234170");
+
+        List<User> foreignUsers = List.of(katy, hary, john);
+
+        Group foreignGroup = system.createGroup("The Group", foreignUsers);
+
+        system.addGroupExpense(katy, foreignGroup, BigDecimal.valueOf(30), new EqualSplitStrategy());
+
+        system.displayAmountOwed(katy);
+        system.displayAmountOwed(hary);
+        system.displayAmountOwed(john);
+
+        system.addIndividualExpense(katy, john, BigDecimal.valueOf(10));
+
+        System.out.println("==========");
+
+        system.displayAmountOwed(katy);
+        system.displayAmountOwed(hary);
+        system.displayAmountOwed(john);
 
     }
 }
