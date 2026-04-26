@@ -67,10 +67,14 @@ public class BalanceRegistry implements SettlementObserver, ExpenseObserver {
             payerOwedMap.put(receiver, amount.negate());
         }
 
-        if (BigDecimal.ZERO.equals(receiverOwedMap.get(payer))
-                && BigDecimal.ZERO.equals(payerOwedMap.get(receiver))) {
+        if (BigDecimal.ZERO.compareTo(receiverOwedMap.get(payer)) == 0
+                && BigDecimal.ZERO.compareTo(payerOwedMap.get(receiver)) == 0) {
             receiverOwedMap.remove(payer);
+            if (receiverOwedMap.size() == 0)
+                balances.remove(receiver);
             payerOwedMap.remove(receiver);
+            if (payerOwedMap.size() == 0)
+                balances.remove(payer);
         }
     }
 

@@ -22,11 +22,32 @@ public class SplitwiseSystemDemo {
 
         Group myGroup = system.createGroup("My Group", users);
 
-        system.addExpense(vishal, myGroup, BigDecimal.valueOf(10), new
-        EqualSplitStrategy());
+        system.addExpense(vishal, myGroup, BigDecimal.valueOf(30), new EqualSplitStrategy());
 
         system.displayAmountOwed(kanan);
+        system.displayAmountOwed(het);
         system.displayAmountOwed(vishal);
+
+        System.out.println("================");
+
+        system.addExpense(het, myGroup, BigDecimal.valueOf(30), new EqualSplitStrategy());
+
+        system.displayAmountOwed(kanan);
+        system.displayAmountOwed(het);
+        system.displayAmountOwed(vishal);
+
+        System.out.println("================");
+
+        system.addExpense(kanan, myGroup, BigDecimal.valueOf(30), new EqualSplitStrategy());
+
+        system.displayAmountOwed(kanan);
+        system.displayAmountOwed(het);
+        system.displayAmountOwed(vishal);
+
+        // system.settleFull(kanan, vishal);
+
+        // system.displayAmountOwed(kanan);
+        // system.displayAmountOwed(vishal);
 
         // User aman = system.addUser("Aman", "aman@gmail.com", "8770556229");
         // User anshit = system.addUser("Anshit", "anshit@gmail.com", "9098752170");
@@ -41,7 +62,8 @@ public class SplitwiseSystemDemo {
 
         // Group friendGroup = system.createGroup("Friends", friends);
 
-        // system.addExpense(aman, friendGroup, BigDecimal.valueOf(20), new PercentageSplitStrategy(userPercentMap));
+        // system.addExpense(aman, friendGroup, BigDecimal.valueOf(20), new
+        // PercentageSplitStrategy(userPercentMap));
 
         // system.displayAmountOwed(aman);
         // system.displayAmountOwed(anshit);

@@ -33,8 +33,6 @@ public class EqualSplitStrategy implements SplitStrategy {
         }
 
         amounts.put(users.getLast().getUserId(), dividedAmount.add(leftOverAmount));
-        System.out.println(amounts);
-
         return amounts;
 
     }

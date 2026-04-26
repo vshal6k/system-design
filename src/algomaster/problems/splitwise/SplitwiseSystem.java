@@ -39,15 +39,37 @@ public class SplitwiseSystem {
         return expense;
     }
 
-    public void settle(User payer, User receiver, BigDecimal amount) {
+    public void settlePartial(User payer, User receiver, BigDecimal amount) {
         Settlement settlement = new Settlement(payer, receiver, amount);
         balanceRegistry.onSettlement(settlement);
         activities.add(settlement);
     }
 
-    // for debugging only
+    // Used by payer to settle the amount owed to the receiver
+    public void settleFull(User payer, User receiver) {
+        Map<String, BigDecimal> payerOwedMap = balanceRegistry.getBalance(payer);
+        if (payerOwedMap == null || payerOwedMap.size() == 0)
+            throw new IllegalArgumentException("Payer does not owe any amount to settle");
+
+        BigDecimal amountOwedToReceiver = payerOwedMap.get(receiver.getUserId());
+
+        if (amountOwedToReceiver == null || amountOwedToReceiver.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Payer does not owe any amount to receiver to settle");
+        }
+
+        Settlement settlement = new Settlement(payer, receiver, amountOwedToReceiver);
+        balanceRegistry.onSettlement(settlement);
+        activities.add(settlement);
+    }
+
+    // for debugging purpose only
     public void displayAmountOwed(User user) {
         Map<String, BigDecimal> amountOwed = balanceRegistry.getBalance(user);
+
+        if (amountOwed == null || amountOwed.size() == 0) {
+            System.out.println(user.getName() + " does not owe anything.");
+            return;
+        }
 
         amountOwed.entrySet().stream().forEach(entry -> {
             System.out.println(
