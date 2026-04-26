@@ -2,20 +2,20 @@ package algomaster.problems.splitwise.entities;
 
 import java.util.UUID;
 
-import algomaster.problems.splitwise.observerpattern.ExpenseObserver;
-import algomaster.problems.splitwise.observerpattern.SettlementObserver;
-
-public class User implements SettlementObserver, ExpenseObserver {
+public class User {
     private final String userId;
     private final String name;
     private final String email;
     private final String phone;
+    private final BalanceSheet balanceSheet;
 
     public User(String name, String email, String phone) {
+        // Add validations if required
         this.userId = UUID.randomUUID().toString();
         this.name = name;
         this.email = email;
         this.phone = phone;
+        this.balanceSheet = new BalanceSheet(this);
     }
 
     public String getUserId() {
@@ -30,27 +30,12 @@ public class User implements SettlementObserver, ExpenseObserver {
         return email;
     }
 
+    public BalanceSheet getBalanceSheet() {
+        return balanceSheet;
+    }
+
     public String getPhone() {
         return phone;
-    }
-
-    @Override
-    public void onExpenseAddition(Expense expense) {
-        if (!expense.isRelevant(this) || expense.getPayer().getUserId().equals(userId))
-            return;
-
-        System.out.println("Hey " + name + "! " + expense.getPayer().getName() + " has added an expense of amount "
-                + expense.getAmount());
-    }
-
-    @Override
-    public void onSettlement(Settlement settlement) {
-        if (!settlement.getReceiver().userId.equals(userId))
-            return;
-
-        System.out.println("Hey " + name + "! " + settlement.getPayer().getName() + " has settled "
-                + settlement.getAmount() + " with you.");
-
     }
 
 }

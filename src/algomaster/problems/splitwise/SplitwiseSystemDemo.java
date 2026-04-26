@@ -1,139 +1,102 @@
 package algomaster.problems.splitwise;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
+import algomaster.problems.splitwise.entities.Expense;
 import algomaster.problems.splitwise.entities.Group;
+import algomaster.problems.splitwise.entities.Transaction;
 import algomaster.problems.splitwise.entities.User;
 import algomaster.problems.splitwise.splitstrategy.EqualSplitStrategy;
 import algomaster.problems.splitwise.splitstrategy.ExactAmountSplitStrategy;
 import algomaster.problems.splitwise.splitstrategy.PercentageSplitStrategy;
 
 public class SplitwiseSystemDemo {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
+        // 1. Setup the service
+        SplitwiseSystem service = SplitwiseSystem.getInstance();
 
-        SplitwiseSystem system = new SplitwiseSystem();
-        User vishal = system.addUser("Vishal", "vshal6k@gmail.com", "8770556229");
-        User kanan = system.addUser("Kanan", "skanan096@gmail.com", "9098752170");
-        User het = system.addUser("Het", "het1236@gmail.com", "9098234170");
+        // 2. Create users and groups
+        User alice = service.addUser("Alice", "alice@a.com", "123");
+        User bob = service.addUser("Bob", "bob@b.com", "123");
+        User charlie = service.addUser("Charlie", "charlie@c.com", "123");
+        User david = service.addUser("David", "david@d.com", "123");
 
-        List<User> users = List.of(vishal, kanan, het);
+        Group friendsGroup = service.addGroup("Friends Trip", List.of(alice, bob, charlie, david));
 
-        Group myGroup = system.createGroup("My Group", users);
+        System.out.println("--- System Setup Complete ---\n");
 
-        Thread t1 = new Thread(() -> {
-            system.addGroupExpense(vishal, myGroup, BigDecimal.valueOf(60), new EqualSplitStrategy());
-        });
+        // 3. Use Case 1: Equal Split
+        System.out.println("--- Use Case 1: Equal Split ---");
+        service.createExpense(new Expense.ExpenseBuilder()
+                .setDescription("Dinner")
+                .setAmount(BigDecimal.valueOf(1000))
+                .setPaidBy(alice)
+                .setParticipants(Arrays.asList(alice, bob, charlie, david))
+                .setSplitStrategy(new EqualSplitStrategy()).build());
 
-        Thread t2 = new Thread(() -> {
-            system.addGroupExpense(het, myGroup, BigDecimal.valueOf(30), new EqualSplitStrategy());
-        });
+        service.showBalanceSheet(alice.getUserId());
+        service.showBalanceSheet(bob.getUserId());
+        System.out.println();
 
-        Thread t3 = new Thread(() -> {
-            system.addGroupExpense(kanan, myGroup, BigDecimal.valueOf(30), new EqualSplitStrategy());
-        });
+        // 4. Use Case 2: Exact Split
+        System.out.println("--- Use Case 2: Exact Split ---");
+        service.createExpense(new Expense.ExpenseBuilder()
+                .setDescription("Movie Tickets")
+                .setAmount(BigDecimal.valueOf(370))
+                .setPaidBy(alice)
+                .setParticipants(Arrays.asList(bob, charlie))
+                .setSplitStrategy(new ExactAmountSplitStrategy(
+                        List.of(BigDecimal.valueOf(120.0), BigDecimal.valueOf(250.0))))
+                .build());
 
-        Thread t5 = new Thread(() -> {
-            system.displayAmountOwed(kanan);
-            system.displayAmountOwed(het);
-            system.displayAmountOwed(vishal);
-        });
+        service.showBalanceSheet(alice.getUserId());
+        service.showBalanceSheet(bob.getUserId());
+        System.out.println();
 
-        Thread t6 = new Thread(() -> {
-            system.addGroupExpense(vishal, myGroup, BigDecimal.valueOf(30), new EqualSplitStrategy());
-        });
+        // 5. Use Case 3: Percentage Split
+        System.out.println("--- Use Case 3: Percentage Split ---");
+        service.createExpense(
+                new Expense.ExpenseBuilder()
+                        .setDescription("Groceries")
+                        .setAmount(BigDecimal.valueOf(500))
+                        .setPaidBy(david)
+                        .setParticipants(Arrays.asList(alice, bob, charlie))
+                        .setSplitStrategy(new PercentageSplitStrategy(
+                                List.of(BigDecimal.valueOf(40.0), BigDecimal.valueOf(30.0), BigDecimal.valueOf(30.0))))
+                        .build());
 
-        Thread t7 = new Thread(() -> {
-            system.settleFull(kanan, vishal);
-        });
+        System.out.println("--- Balances After All Expenses ---");
+        service.showBalanceSheet(alice.getUserId());
+        service.showBalanceSheet(bob.getUserId());
 
-        // Add Group Expenses Simulataneously
-        t1.start();
-        t2.start();
-        t3.start();
-        t5.start();
-        t6.start();
+        service.showBalanceSheet(charlie.getUserId());
+        service.showBalanceSheet(david.getUserId());
 
-        t7.start();
+        System.out.println();
 
-        // try {
-        // // wait for expenses to get added
-        // t1.join();
-        // t2.join();
-        // t3.join();
-        // } catch (InterruptedException e) {
-        // e.printStackTrace();
-        // }
+        // 6. Use Case 4: Simplify Group Debts
+        System.out.println("--- Use Case 4: Simplify Group Debts for 'Friends Trip' ---");
+        List<Transaction> simplifiedDebts = service.simplifyGroupDebts(friendsGroup.getGroupId());
+        if (simplifiedDebts.isEmpty()) {
+            System.out.println("All debts are settled within the group!");
+        } else {
+            simplifiedDebts.forEach(System.out::println);
+        }
+        System.out.println();
 
-        // // Check if simulataneous expense addition works
-        // system.displayAmountOwed(kanan);
-        // system.displayAmountOwed(het);
-        // system.displayAmountOwed(vishal);
+        service.showBalanceSheet(bob.getUserId());
 
-        // User aman = system.addUser("Aman", "aman@gmail.com", "8770556229");
-        // User anshit = system.addUser("Anshit", "anshit@gmail.com", "9098752170");
-        // User harsh = system.addUser("Harsh", "harsh@gmail.com", "9098234170");
+        // 7. Use Case 5: Partial Settlement
+        System.out.println("--- Use Case 5: Partial Settlement ---");
+        // From the simplified debts, we see Bob should pay Alice. Let's say Bob pays
+        // 100.
+        service.settleUp(bob.getUserId(), alice.getUserId(), BigDecimal.valueOf(100));
 
-        // Map<String, BigDecimal> userPercentMap = new HashMap<>();
-        // userPercentMap.put(aman.getUserId(), BigDecimal.valueOf(0.249));
-        // userPercentMap.put(anshit.getUserId(), BigDecimal.valueOf(0.250));
-        // userPercentMap.put(harsh.getUserId(), BigDecimal.valueOf(0.500000000));
-
-        // List<User> friends = List.of(aman, anshit, harsh);
-
-        // Group friendGroup = system.createGroup("Friends", friends);
-
-        // system.addGroupExpense(aman, friendGroup, BigDecimal.valueOf(20), new
-        // PercentageSplitStrategy(userPercentMap));
-
-        // system.displayAmountOwed(aman);
-        // system.displayAmountOwed(anshit);
-        // system.displayAmountOwed(harsh);
-
-        // User soumya = system.addUser("soumya", "soumya@gmail.com", "8770556229");
-        // User vaidehi = system.addUser("vaidehi", "vaidehi@gmail.com", "9098752170");
-        // User apeksha = system.addUser("apeksha", "apeksha@gmail.com", "9098234170");
-
-        // Map<String, BigDecimal> userPercentMap = new HashMap<>();
-        // userPercentMap.put(soumya.getUserId(), BigDecimal.valueOf(1.99));
-        // userPercentMap.put(vaidehi.getUserId(), BigDecimal.valueOf(1.46));
-        // userPercentMap.put(apeksha.getUserId(), BigDecimal.valueOf(3.55));
-
-        // List<User> friends = List.of(soumya, vaidehi, apeksha);
-
-        // Group friendGroup = system.createGroup("Friends", friends);
-
-        // system.addGroupExpense(soumya, friendGroup, BigDecimal.valueOf(7), new
-        // ExactAmountSplitStrategy(userPercentMap));
-
-        // system.displayAmountOwed(soumya);
-        // system.displayAmountOwed(vaidehi);
-        // system.displayAmountOwed(apeksha);
-
-        // User katy = system.addUser("katy", "vshal6k@gmail.com", "8770556229");
-        // User hary = system.addUser("hary", "skanan096@gmail.com", "9098752170");
-        // User john = system.addUser("john", "het1236@gmail.com", "9098234170");
-
-        // List<User> foreignUsers = List.of(katy, hary, john);
-
-        // Group foreignGroup = system.createGroup("The Group", foreignUsers);
-
-        // system.addGroupExpense(katy, foreignGroup, BigDecimal.valueOf(30), new
-        // EqualSplitStrategy());
-
-        // system.displayAmountOwed(katy);
-        // system.displayAmountOwed(hary);
-        // system.displayAmountOwed(john);
-
-        // system.addIndividualExpense(katy, john, BigDecimal.valueOf(10));
-
-        // System.out.println("==========");
-
-        // system.displayAmountOwed(katy);
-        // system.displayAmountOwed(hary);
-        // system.displayAmountOwed(john);
+        System.out.println("--- Balances After Partial Settlement ---");
+        service.showBalanceSheet(alice.getUserId());
+        service.showBalanceSheet(bob.getUserId());
 
     }
 }

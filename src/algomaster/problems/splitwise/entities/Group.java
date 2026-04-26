@@ -2,24 +2,22 @@ package algomaster.problems.splitwise.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Group {
     private final String groupId;
     private final String groupName;
-    private final Map<String, PaymentActivity> activities = new ConcurrentHashMap<>();
-    private final Map<String, User> users = new ConcurrentHashMap<>();
+    private final List<User> members;
 
-    public Group(String groupName, List<User> users) {
+    public Group(String groupName, List<User> members) {
+        // Add validations if required
         this.groupId = UUID.randomUUID().toString();
         this.groupName = groupName;
-        addUsers(users);
+        this.members = List.copyOf(members);
     }
 
     public List<User> getUsers() {
-        return new ArrayList<>(users.values());
+        return new ArrayList<>(members);
     }
 
     public String getGroupId() {
@@ -30,14 +28,7 @@ public class Group {
         return groupName;
     }
 
-    private void addUsers(List<User> users) {
-        for (User user : users) {
-            this.users.put(user.getUserId(), user);
-        }
+    public List<User> getMembers() {
+        return members;
     }
-
-    public void addActivity(PaymentActivity paymentActivity) {
-        activities.put(paymentActivity.getId(), paymentActivity);
-    }
-
 }

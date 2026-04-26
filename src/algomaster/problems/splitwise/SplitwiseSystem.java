@@ -2,45 +2,43 @@ package algomaster.problems.splitwise;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import algomaster.problems.splitwise.entities.Expense;
 import algomaster.problems.splitwise.entities.Group;
-import algomaster.problems.splitwise.entities.PaymentActivity;
-import algomaster.problems.splitwise.entities.Settlement;
+import algomaster.problems.splitwise.entities.Split;
+import algomaster.problems.splitwise.entities.Transaction;
 import algomaster.problems.splitwise.entities.User;
-import algomaster.problems.splitwise.observerpattern.ExpenseObserver;
-import algomaster.problems.splitwise.observerpattern.SettlementObserver;
-import algomaster.problems.splitwise.splitstrategy.EqualSplitStrategy;
-import algomaster.problems.splitwise.splitstrategy.SplitStrategy;
 
 public class SplitwiseSystem {
-    private final BalanceRegistry balanceRegistry = new BalanceRegistry();
+    private static SplitwiseSystem instance;
     private final Map<String, Group> groups = new ConcurrentHashMap<>();
     private final Map<String, User> users = new ConcurrentHashMap<>();
-    private final Map<String, PaymentActivity> activities = new ConcurrentHashMap<>();
-    private List<ExpenseObserver> expenseObservers = Collections.synchronizedList(new ArrayList<>());
-    private List<SettlementObserver> settlementObservers = Collections.synchronizedList(new ArrayList<>());
-    private ReentrantLock settlementLock = new ReentrantLock();
 
-    public SplitwiseSystem() {
-        expenseObservers.add(balanceRegistry);
-        settlementObservers.add(balanceRegistry);
+    private SplitwiseSystem() {
     }
 
+    public static synchronized SplitwiseSystem getInstance() {
+        if (instance == null) {
+            instance = new SplitwiseSystem();
+        }
+        return instance;
+    }
+
+    // Setup Function
     public User addUser(String name, String email, String phone) {
         User user = new User(name, email, phone);
         users.put(user.getUserId(), user);
-        expenseObservers.add(user);
-        settlementObservers.add(user);
         return user;
     }
 
-    public Group createGroup(String groupName, List<User> users) {
+    // Setup Function
+    public Group addGroup(String groupName, List<User> users) {
         for (User user : users) {
             if (this.users.get(user.getUserId()) == null)
                 throw new IllegalArgumentException("User is not registered in the system.");
@@ -51,106 +49,86 @@ public class SplitwiseSystem {
         return group;
     }
 
-    public Expense addGroupExpense(User paidBy, Group group, BigDecimal amount, SplitStrategy splitStrategy) {
-        try {
-            settlementLock.lock();
-            Expense expense = new Expense(amount, paidBy, group.getUsers(), splitStrategy);
-            group.addActivity(expense);
-            notifyExpenseObservers(expense);
-            activities.put(expense.getId(), expense);
-            return expense;
-        } finally {
-            settlementLock.unlock();
+    // Core Function
+    public void createExpense(Expense expense) {
+        User paidBy = expense.getPaidBy();
+        List<User> pariticipants = expense.getParticipants();
+        List<Split> splits = expense.getSplits();
+
+        for (int i = 0; i < pariticipants.size(); i++) {
+            User participant = pariticipants.get(i);
+            if (participant.getUserId().equals(paidBy.getUserId()))
+                continue;
+            paidBy.getBalanceSheet().adjutsBalance(participant, splits.get(i).getAmount());
+            participant.getBalanceSheet().adjutsBalance(paidBy, splits.get(i).getAmount().negate());
         }
+
     }
 
-    public Expense addIndividualExpense(User paidBy, User recevier, BigDecimal amount) {
-        try {
-            settlementLock.lock();
-            Expense expense = new Expense(amount, paidBy, List.of(recevier), new EqualSplitStrategy());
-            notifyExpenseObservers(expense);
-            activities.put(expense.getId(), expense);
-            return expense;
-        } finally {
-            settlementLock.unlock();
-        }
+    // Core Function
+    public void settleUp(String payerId, String payeeId, BigDecimal amount) {
+        if (payeeId.equals(payerId))
+            throw new IllegalArgumentException("User cannot pay to itself");
+        User payer = users.get(payerId);
+        User payee = users.get(payeeId);
+
+        payee.getBalanceSheet().adjutsBalance(payer, amount.negate());
+        payer.getBalanceSheet().adjutsBalance(payee, amount);
     }
 
-    public void settlePartial(User payer, User receiver, BigDecimal amount) {
-        try {
-            settlementLock.lock();
-            Map<String, BigDecimal> payerOwedMap = balanceRegistry.getBalance(payer);
-            if (payerOwedMap == null || payerOwedMap.size() == 0)
-                throw new IllegalArgumentException("Payer does not owe any amount to settle");
+    public void showBalanceSheet(String userId) {
+        User user = users.get(userId);
+        user.getBalanceSheet().showBalances();
+    }
 
-            BigDecimal amountOwedToReceiver = payerOwedMap.get(receiver.getUserId());
+    public List<Transaction> simplifyGroupDebts(String groupId) {
+        Group group = groups.get(groupId);
+        if (group == null)
+            throw new IllegalArgumentException("Group not found");
 
-            if (amountOwedToReceiver == null || amountOwedToReceiver.compareTo(BigDecimal.ZERO) <= 0) {
-                throw new IllegalArgumentException("Payer does not owe any amount to receiver to settle");
+        // Calculate net balance for each member within the group context
+        Map<User, BigDecimal> netBalances = new HashMap<>();
+        for (User member : group.getMembers()) {
+            BigDecimal balance = BigDecimal.ZERO;
+            for (Map.Entry<User, BigDecimal> entry : member.getBalanceSheet().getBalances().entrySet()) {
+                // Consider only balances with other group members
+                if (group.getMembers().contains(entry.getKey())) {
+                    balance = balance.add(entry.getValue());
+                }
             }
-
-            Settlement settlement = new Settlement(payer, receiver, amount);
-            notifySettlementObservers(settlement);
-            activities.put(settlement.getId(), settlement);
-        } finally {
-            settlementLock.unlock();
-        }
-    }
-
-    // Used by payer to settle the amount owed to the receiver
-    public void settleFull(User payer, User receiver) {
-        try {
-            settlementLock.lock();
-            Map<String, BigDecimal> payerOwedMap = balanceRegistry.getBalance(payer);
-            if (payerOwedMap == null || payerOwedMap.size() == 0)
-                throw new IllegalArgumentException("Payer does not owe any amount to settle");
-
-            BigDecimal amountOwedToReceiver = payerOwedMap.get(receiver.getUserId());
-
-            if (amountOwedToReceiver == null || amountOwedToReceiver.compareTo(BigDecimal.ZERO) <= 0) {
-                throw new IllegalArgumentException("Payer does not owe any amount to receiver to settle");
-            }
-
-            Settlement settlement = new Settlement(payer, receiver, amountOwedToReceiver);
-            notifySettlementObservers(settlement);
-            activities.put(settlement.getId(), settlement);
-        } finally {
-            settlementLock.unlock();
-        }
-    }
-
-    public void notifyExpenseObservers(Expense expense) {
-        for (ExpenseObserver expenseObserver : expenseObservers) {
-            expenseObserver.onExpenseAddition(expense);
-        }
-    }
-
-    public void notifySettlementObservers(Settlement settlement) {
-        for (SettlementObserver settlementObserver : settlementObservers) {
-            settlementObserver.onSettlement(settlement);
-        }
-    }
-
-    // for debugging purpose only
-    public void displayAmountOwed(User user) {
-        try {
-            settlementLock.lock();
-            Map<String, BigDecimal> amountOwed = balanceRegistry.getBalance(user);
-
-            if (amountOwed == null || amountOwed.size() == 0) {
-                System.out.println(user.getName() + " does not owe anything.");
-                return;
-            }
-
-            amountOwed.entrySet().stream().forEach(entry -> {
-                System.out.println(
-                        user.getName() + " owes " + entry.getValue() + " amount to "
-                                + users.get(entry.getKey()).getName());
-            });
-        } finally {
-            settlementLock.unlock();
+            netBalances.put(member, balance);
         }
 
+        // Separate into creditors and debtors
+        List<Map.Entry<User, BigDecimal>> creditors = netBalances.entrySet().stream()
+                .filter(e -> e.getValue().compareTo(BigDecimal.ZERO) > 0).collect(Collectors.toList());
+
+        List<Map.Entry<User, BigDecimal>> debtors = netBalances.entrySet().stream()
+                .filter(e -> e.getValue().compareTo(BigDecimal.ZERO) < 0).collect(Collectors.toList());
+
+        creditors.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+        debtors.sort(Map.Entry.comparingByValue());
+
+        List<Transaction> transactions = new ArrayList<>();
+        int i = 0, j = 0;
+        while (i < creditors.size() && j < debtors.size()) {
+            Map.Entry<User, BigDecimal> creditor = creditors.get(i);
+            Map.Entry<User, BigDecimal> debtor = debtors.get(j);
+
+            BigDecimal creditorAmount = creditor.getValue();
+            BigDecimal debtorAmount = debtor.getValue().negate();
+
+            BigDecimal amountToSettle = creditorAmount.compareTo(debtorAmount) <= 0 ? creditorAmount : debtorAmount;
+
+            creditor.setValue(creditor.getValue().subtract(amountToSettle));
+            debtor.setValue(debtor.getValue().add(amountToSettle));
+
+            if (creditor.getValue().compareTo(BigDecimal.ZERO) <= 0)
+                i++;
+            if (debtor.getValue().compareTo(BigDecimal.ZERO) >= 0)
+                j++;
+        }
+        return transactions;
     }
 
 }

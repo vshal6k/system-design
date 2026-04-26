@@ -1,55 +1,59 @@
 package algomaster.problems.splitwise.splitstrategy;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import algomaster.problems.splitwise.entities.Split;
 import algomaster.problems.splitwise.entities.User;
 
 public class ExactAmountSplitStrategy implements SplitStrategy {
-    private final Map<String, BigDecimal> userAmountMap;
+    private final List<BigDecimal> splitValues;
 
-    public ExactAmountSplitStrategy(Map<String, BigDecimal> userAmountMap) {
-        this.userAmountMap = userAmountMap;
+    public ExactAmountSplitStrategy(List<BigDecimal> splitValues) {
+        if (splitValues == null || splitValues.isEmpty())
+            throw new IllegalArgumentException("Split value cannot be null for percentage split strategy.");
+        this.splitValues = splitValues;
     }
 
     @Override
-    public Map<String, BigDecimal> split(BigDecimal amount, List<User> users) {
-        if (amount == null)
-            throw new IllegalArgumentException("Amount cannot be null");
-        if (users == null)
-            throw new IllegalArgumentException("Users cannot be null");
+    public List<Split> split(BigDecimal amount, List<User> users) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0)
+            throw new IllegalArgumentException("Amount cannot be null or zero.");
 
-        Map<String, BigDecimal> amounts = new HashMap<>();
-        int totalUsers = users.size();
+        if (users == null || users.isEmpty())
+            throw new IllegalArgumentException("Users cannot be null/empty.");
 
-        if (BigDecimal.ZERO.equals(amount) || totalUsers == 0) {
-            // amount zero or no users does not require any splitting
-            return amounts;
-        }
-
-        validateUserAmountMap(amount);
-
-        for (User user : users) {
-            BigDecimal userAmount = userAmountMap.get(user.getUserId());
-
-            if (userAmount == null)
-                throw new IllegalArgumentException("No percentage data found for the user " + user.getName());
-
-            amounts.put(user.getUserId(), userAmount);
-
-        }
-
-        return amounts;
-    }
-
-    private void validateUserAmountMap(BigDecimal amount) {
-        BigDecimal amountSum = userAmountMap.values().stream().reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
-        if (amount.compareTo(amountSum) != 0)
+        if (splitValues.size() != users.size())
             throw new IllegalArgumentException(
-                    "Sum of amounts used to split expense is not equal to the total amount.");
+                    "Number of split values do not match the number of participants in the expense.");
 
+        BigDecimal splitVaulesSum = splitValues.stream().reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
+
+        if (splitVaulesSum.compareTo(amount) != 0)
+            throw new IllegalArgumentException("Split values do not sum up to the total amount");
+
+        List<Split> splits = new ArrayList<>();
+
+        BigDecimal userAmountSum = BigDecimal.ZERO;
+
+        for (int i = 0; i < users.size(); i++) {
+            User user = users.get(i);
+            BigDecimal userAmount = splitValues.get(i).setScale(2, RoundingMode.HALF_UP);
+            if (userAmount == null)
+                throw new IllegalArgumentException("No amount data found for the user " + user.getName());
+
+            splits.add(new Split(user, userAmount));
+            userAmountSum = userAmountSum.add(userAmount);
+        }
+
+        BigDecimal leftOverAmount = amount.subtract(userAmountSum);
+        Split lastSplit = splits.getLast();
+        Split lastSplitPlusLeftOver = new Split(lastSplit.getUser(), lastSplit.getAmount().add(leftOverAmount));
+        splits.set(splits.size() - 1, lastSplitPlusLeftOver);
+
+        return splits;
     }
 
 }
