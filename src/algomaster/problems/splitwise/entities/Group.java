@@ -6,16 +6,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import algomaster.problems.splitwise.observerpattern.ExpenseObserver;
-import algomaster.problems.splitwise.observerpattern.SettlementObserver;
-
 public class Group {
     private final String groupId;
     private final String groupName;
-    private Map<String, Expense> expenses = new ConcurrentHashMap<>();
-    private Map<String, User> users = new ConcurrentHashMap<>();
-    private List<ExpenseObserver> expenseObservers = new ArrayList<>();
-    private List<SettlementObserver> settlementObservers = new ArrayList<>();
+    private final Map<String, PaymentActivity> activities = new ConcurrentHashMap<>();
+    private final Map<String, User> users = new ConcurrentHashMap<>();
 
     public Group(String groupName, List<User> users) {
         this.groupId = UUID.randomUUID().toString();
@@ -31,56 +26,18 @@ public class Group {
         return groupId;
     }
 
-    public void addUsers(List<User> users) {
+    public String getGroupName() {
+        return groupName;
+    }
+
+    private void addUsers(List<User> users) {
         for (User user : users) {
             this.users.put(user.getUserId(), user);
         }
     }
 
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void addUser(User user) {
-        if (users.get(user.getUserId()) != null)
-            throw new IllegalArgumentException("User is already a part of the group.");
-
-        users.put(user.getUserId(), user);
-    }
-
-    public void removeUser(User user) {
-        if (users.get(user.getUserId()) == null)
-            throw new IllegalArgumentException("User is not a part of the group.");
-
-        users.remove(user.getUserId());
-    }
-
-    public void addExpense(Expense expense) {
-        if (expenses.get(expense.getId()) != null)
-            throw new IllegalArgumentException("Expense is already added in the group.");
-
-        expenses.put(expense.getId(), expense);
-        notifyExpenseObservers(expense);
-    }
-
-    public void removeExpense(Expense expense) {
-        if (expenses.get(expense.getId()) == null)
-            throw new IllegalArgumentException("Expense is not added in the group.");
-
-        expenses.remove(expense.getId());
-        notifyExpenseObservers(expense.negation());
-    }
-
-    public void notifyExpenseObservers(Expense expense) {
-        for (ExpenseObserver expenseObserver : expenseObservers) {
-            expenseObserver.onExpenseAddition(expense);
-        }
-    }
-
-    public void notifySettlementObservers(Settlement settlement) {
-        for (SettlementObserver settlementObserver : settlementObservers) {
-            settlementObserver.onSettlement(settlement);
-        }
+    public void addActivity(PaymentActivity paymentActivity) {
+        activities.put(paymentActivity.getId(), paymentActivity);
     }
 
 }
