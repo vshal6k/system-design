@@ -17,6 +17,11 @@ public class Transaction {
         this.amount = amount;
     }
 
+    @Override
+    public String toString() {
+        return "Transaction [payer=" + payer.getName() + ", payee=" + payee.getName() + ", amount=" + amount + "]";
+    }
+
     public String getId() {
         return id;
     }

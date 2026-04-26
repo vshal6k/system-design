@@ -120,6 +120,8 @@ public class SplitwiseSystem {
 
             BigDecimal amountToSettle = creditorAmount.compareTo(debtorAmount) <= 0 ? creditorAmount : debtorAmount;
 
+            transactions.add(new Transaction(debtor.getKey(), creditor.getKey(), amountToSettle));
+
             creditor.setValue(creditor.getValue().subtract(amountToSettle));
             debtor.setValue(debtor.getValue().add(amountToSettle));
 
