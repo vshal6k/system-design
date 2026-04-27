@@ -1,4 +1,4 @@
-package algomaster.problems.moviebookingsystem.strategy;
+package algomaster.problems.moviebookingsystem.strategy.pricingstrategy;
 
 import java.math.BigDecimal;
 

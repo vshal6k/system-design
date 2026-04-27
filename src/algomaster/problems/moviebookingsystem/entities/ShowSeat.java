@@ -31,4 +31,8 @@ public class ShowSeat {
         return status;
     }
 
+    public boolean isAvailable(){
+        return (status.equals(SeatStatus.AVAILABLE) ? true: false);
+    }
+
 }
