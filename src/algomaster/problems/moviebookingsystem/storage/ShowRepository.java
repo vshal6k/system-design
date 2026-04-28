@@ -11,13 +11,12 @@ import algomaster.problems.moviebookingsystem.entities.City;
 import algomaster.problems.moviebookingsystem.entities.Movie;
 import algomaster.problems.moviebookingsystem.entities.Screen;
 import algomaster.problems.moviebookingsystem.entities.Show;
-import algomaster.problems.moviebookingsystem.strategy.pricingstrategy.SeatPricingStrategy;
+import algomaster.problems.moviebookingsystem.strategy.pricingstrategy.PricingStrategy;
 
 public class ShowRepository {
     private final Map<String, Show> shows = new ConcurrentHashMap<>();
 
-    public Show createShow(City city, Cinema cinema, Screen screen, Movie movie, LocalDateTime time,
-            SeatPricingStrategy pricingStrategy) {
+    public Show createShow(City city, Cinema cinema, Screen screen, Movie movie, LocalDateTime time, PricingStrategy pricingStrategy) {
         Show show = new Show(city, cinema, screen, movie, time, pricingStrategy);
         shows.put(show.getId(), show);
         return show;

@@ -2,12 +2,12 @@ package algomaster.problems.moviebookingsystem.service;
 
 import java.math.BigDecimal;
 
-import algomaster.problems.moviebookingsystem.strategy.paymentmethod.PaymentMethod;
+import algomaster.problems.moviebookingsystem.strategy.paymentmethod.PaymentStrategy;
 
 public class PaymentService {
-    private final PaymentMethod paymentMethod;
+    private final PaymentStrategy paymentMethod;
 
-    public PaymentService(PaymentMethod paymentMethod) {
+    public PaymentService(PaymentStrategy paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 

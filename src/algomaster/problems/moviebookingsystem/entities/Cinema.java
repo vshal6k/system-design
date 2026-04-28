@@ -6,11 +6,13 @@ import java.util.UUID;
 public class Cinema {
     private final String id;
     private final String name;
+    private final City city;
     private final List<Screen> screens;
 
-    public Cinema(String name, List<Screen> screens) {
+    public Cinema(String name, City city, List<Screen> screens) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
+        this.city = city;
         this.screens = screens;
     }
 
@@ -22,8 +24,12 @@ public class Cinema {
         return name;
     }
 
+    public City getCity() {
+        return city;
+    }
+
     public List<Screen> getScreens() {
-        return List.copyOf(screens);
+        return screens;
     }
 
 }

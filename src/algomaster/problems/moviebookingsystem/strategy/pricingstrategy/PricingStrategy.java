@@ -1,11 +1,12 @@
 package algomaster.problems.moviebookingsystem.strategy.pricingstrategy;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import algomaster.problems.moviebookingsystem.entities.Seat;
 
-public interface SeatPricingStrategy {
+public interface PricingStrategy {
 
-    BigDecimal calculatePrice(Seat seat);
+    BigDecimal calculatePrice(List<Seat> seats);
 
 }

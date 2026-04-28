@@ -1,30 +1,46 @@
 package algomaster.problems.moviebookingsystem.entities;
 
-import java.util.UUID;
-
+import algomaster.problems.moviebookingsystem.enums.SeatStatus;
 import algomaster.problems.moviebookingsystem.enums.SeatType;
 
 public class Seat {
     private final String id;
-    private final String name;
+    private final int row;
+    private final int col;
     private final SeatType type;
+    private SeatStatus status;
 
+    public Seat(String id, int row, int col, SeatType type) {
+        this.id = id;
+        this.row = row;
+        this.col = col;
+        this.type = type;
+        this.status = SeatStatus.AVAILABLE;
+    }
+
+    // Getters and a setter for status
     public String getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public int getRow() {
+        return row;
     }
 
-    public Seat(String name, SeatType type, boolean isAvailable) {
-        this.id = UUID.randomUUID().toString();
-        this.name = name;
-        this.type = type;
+    public int getCol() {
+        return col;
     }
 
     public SeatType getType() {
         return type;
+    }
+
+    public SeatStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(SeatStatus status) {
+        this.status = status;
     }
 
 }
