@@ -5,11 +5,8 @@ import java.util.UUID;
 public class UUIDShorteningStrategy implements ShorteningStrategy {
 
     @Override
-    public String shorten(String longURL, String alias) {
-        if (alias != null)
-            return alias;
-        else
-            return UUID.randomUUID().toString();
+    public String shorten(String longURL) {
+        return UUID.randomUUID().toString();
     }
 
 }

@@ -23,7 +23,6 @@ public class URLShortnerDemo {
         String shortURL5 = urlShortner.getShortURL("https://telegram.com", null, null);
         System.out.println(shortURL5);
 
-
         String longURL1 = urlShortner.getLongURLUsingShortURL(shortURL1);
         System.out.println(longURL1);
 
