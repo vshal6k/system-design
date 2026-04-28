@@ -17,16 +17,6 @@ public class URLShortner {
         this.shorteningStrategy = shorteningStrategy;
     };
 
-    public static URLShortner getInstance(ShorteningStrategy shorteningStrategy) {
-        if (INSTANCE == null) {
-            synchronized (URLShortner.class) {
-                if (INSTANCE == null)
-                    INSTANCE = new URLShortner(shorteningStrategy);
-            }
-        }
-        return INSTANCE;
-    }
-
     private void removeShortURLIfExpired(ShortURL shortURL) {
         if (shortURL != null && shortURL.isExpired()) {
             shortURLMap.remove(shortURL.getShortURLString());
@@ -41,6 +31,16 @@ public class URLShortner {
                 throw new IllegalArgumentException("Alias is already in use. Please choose another alias.");
             }
         }
+    }
+
+    public static URLShortner getInstance(ShorteningStrategy shorteningStrategy) {
+        if (INSTANCE == null) {
+            synchronized (URLShortner.class) {
+                if (INSTANCE == null)
+                    INSTANCE = new URLShortner(shorteningStrategy);
+            }
+        }
+        return INSTANCE;
     }
 
     public String getShortURL(String longURLString, String alias, LocalDate expiryDate) {
