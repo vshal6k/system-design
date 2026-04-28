@@ -22,8 +22,8 @@ public class ShortURL {
         return longURLString;
     }
 
-    public AtomicInteger getTimesClicked() {
-        return timesClicked;
+    public int getTimesClicked() {
+        return timesClicked.intValue();
     }
 
     public String getShortURLString() {
