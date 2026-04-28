@@ -1,11 +1,11 @@
 package algomaster.problems.urlshortner;
 
-import algomaster.problems.urlshortner.shorteningStrategy.UUIDShorteningStrategy;
+import algomaster.problems.urlshortner.shorteningStrategy.Base62ShorteningStrategy;
 
 public class URLShortnerDemo {
 
     public static void main(String[] args) {
-        URLShortner urlShortner = new URLShortner(new UUIDShorteningStrategy());
+        URLShortner urlShortner = new URLShortner(new Base62ShorteningStrategy());
 
         // Shorten Long URLs
         String shortURL1 = urlShortner.getShortURL("https://google.com", "google", null);
