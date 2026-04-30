@@ -2,7 +2,7 @@ package algomaster.problems.loggingframework.entities;
 
 import java.time.LocalDateTime;
 
-import algomaster.designpatterns.handler.loggersystem.LogLevel;
+import algomaster.problems.loggingframework.enums.LogLevel;
 
 public class LogMessage {
     private final LocalDateTime timeStamp;

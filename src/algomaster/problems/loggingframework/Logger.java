@@ -3,8 +3,8 @@ package algomaster.problems.loggingframework;
 import java.util.ArrayList;
 import java.util.List;
 
-import algomaster.designpatterns.handler.loggersystem.LogLevel;
 import algomaster.problems.loggingframework.entities.LogMessage;
+import algomaster.problems.loggingframework.enums.LogLevel;
 import algomaster.problems.loggingframework.strategy.appender.LogAppender;
 
 public class Logger {
@@ -12,13 +12,12 @@ public class Logger {
     private LogLevel level;
     private final Logger parent;
     private final List<LogAppender> appenders;
-    private final LogManager logManager;
+    private boolean additivity = true;
 
     public Logger(String name, Logger parent) {
         this.name = name;
         this.parent = parent;
         this.appenders = new ArrayList<>();
-        this.logManager = new LogManager();
     }
 
     public List<LogAppender> getAppenders() {
@@ -37,16 +36,38 @@ public class Logger {
         return level;
     }
 
+    public LogLevel getEffectiveLevel() {
+        for (Logger logger = this; logger != null; logger = logger.parent) {
+            LogLevel currentLevel = logger.level;
+            if (currentLevel != null) {
+                return currentLevel;
+            }
+        }
+        return LogLevel.DEBUG; // Default root level
+    }
+
+    public void setAdditivity(boolean value) {
+        this.additivity = value;
+    }
+
     public void addAppender(LogAppender appender) {
         appenders.add(appender);
     }
 
     public void log(String message, LogLevel level) {
-        if (this.level != null && level.ordinal() < this.level.ordinal())
-            return;
+        if (level.isGreaterOrEqual(getEffectiveLevel())) {
+            LogMessage logMessage = new LogMessage(level, this.name, message);
+            callAppenders(logMessage);
+        }
+    }
 
-        LogMessage logMessage = new LogMessage(level, name, message);
-        logManager.getProcessor().process(logMessage, appenders);
+    private void callAppenders(LogMessage logMessage) {
+        if (!appenders.isEmpty()) {
+            LogManager.getInstance().getProcessor().process(logMessage, this.appenders);
+        }
+        if (additivity && parent != null) {
+            parent.callAppenders(logMessage);
+        }
     }
 
     public void debug(String message) {
