@@ -31,7 +31,7 @@ public class FileAppender implements LogAppender {
     }
 
     @Override
-    public void close() {
+    public synchronized void close() {
         try {
             writer.close();
         } catch (IOException e) {

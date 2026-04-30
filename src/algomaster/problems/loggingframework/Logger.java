@@ -2,6 +2,7 @@ package algomaster.problems.loggingframework;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import algomaster.problems.loggingframework.entities.LogMessage;
 import algomaster.problems.loggingframework.enums.LogLevel;
@@ -17,11 +18,11 @@ public class Logger {
     public Logger(String name, Logger parent) {
         this.name = name;
         this.parent = parent;
-        this.appenders = new ArrayList<>();
+        this.appenders = new CopyOnWriteArrayList<>();
     }
 
     public List<LogAppender> getAppenders() {
-        return new ArrayList<>(appenders);
+        return new CopyOnWriteArrayList<>(appenders);
     }
 
     public void setLevel(LogLevel level) {

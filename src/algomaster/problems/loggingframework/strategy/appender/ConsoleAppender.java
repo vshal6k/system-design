@@ -5,7 +5,7 @@ import algomaster.problems.loggingframework.strategy.formatter.LogFormatter;
 import algomaster.problems.loggingframework.strategy.formatter.SimpleTextFormatter;
 
 public class ConsoleAppender implements LogAppender {
-    private LogFormatter formatter;
+    private volatile LogFormatter formatter;
 
     public ConsoleAppender() {
         this.formatter = new SimpleTextFormatter();

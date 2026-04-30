@@ -3,6 +3,7 @@ package algomaster.problems.loggingframework;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import algomaster.problems.loggingframework.entities.LogMessage;
@@ -26,11 +27,16 @@ public class AsyncLogProcessor {
         }
 
         // Submit a new task to the executor.
-        executor.submit(() -> {
-            for (LogAppender appender : appenders) {
-                appender.append(logMessage);
-            }
-        });
+        try {
+            executor.submit(() -> {
+                for (LogAppender appender : appenders) {
+                    appender.append(logMessage);
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            System.err.println("Logger is shut down. Cannot process log message.");
+        }
+
     }
 
     public void stop() {
