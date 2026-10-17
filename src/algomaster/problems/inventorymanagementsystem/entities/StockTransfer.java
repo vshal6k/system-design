@@ -7,6 +7,7 @@ public class StockTransfer {
     private String sourceWareHouseId;
     private String targetWareHouseId;
     private LocalDateTime createdAt;
+    private int quantity;
 
     public String getProductId() {
         return productId;
@@ -20,15 +21,25 @@ public class StockTransfer {
         return targetWareHouseId;
     }
 
-    public StockTransfer(String productId, String sourceWareHouseId, String targetWareHouseId) {
+    public StockTransfer(String productId, String sourceWareHouseId, String targetWareHouseId, int quantity) {
         this.productId = productId;
         this.sourceWareHouseId = sourceWareHouseId;
         this.targetWareHouseId = targetWareHouseId;
+        this.quantity = quantity;
         this.createdAt = LocalDateTime.now();
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    @Override
+    public String toString() {
+        return "Stock Transfer, Product Id: " + productId + " From: " + sourceWareHouseId + " To: " + targetWareHouseId;
     }
 
 }
